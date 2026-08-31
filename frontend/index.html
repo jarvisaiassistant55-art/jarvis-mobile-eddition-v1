@@ -1,31 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>J.A.R.V.I.S</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,
+        initial-scale=1.0,
+        maximum-scale=1.0,
+        user-scalable=no"
+    >
+
+    <title>J.A.R.V.I.S. — Mobile Edition</title>
+
+    <!-- Main UI stylesheet -->
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
- <header><h1>J.A.R.V.I.S</h1><p>MOBILE EDITION</p></header>
- <div class="core">
- <div class="ring r1"></div>
- <div class="ring r2"></div>
- <div class="center"></div>
- </div>
- <p class="core-text">CORE ACTIVE</p>
- <div class="status">
- <h2>SYSTEM STATUS</h2>
- <div class="row"><span>AI CORE</span><b class="on">● ONLINE</b></div>
- <div class="row"><span>NETWORK</span><b class="on">● ONLINE</b></div>
- <div class="row"><span>VOICE</span><b class="off">○ LOCKED</b></div>
- <div class="row"><span>MEMORY</span><b class="off">○ LOCKED</b></div>
- </div>
- <div class="chat" id="chat"></div>
- <div class="input-area">
- <input id="msg" placeholder="Ask J.A.R.V.I.S...">
- <button id="send">SEND</button>
- </div>
- <script src="script.js"></script>
+
+    <main class="app">
+
+        <!-- ================= HEADER ================= -->
+        <header class="header">
+            <div class="system-label">STARK INDUSTRIES</div>
+
+            <h1>J.A.R.V.I.S.</h1>
+
+            <p class="edition">MOBILE EDITION</p>
+
+            <div class="header-line"></div>
+        </header>
+
+
+        <!-- ================= CORE ================= -->
+        <section class="core-section">
+
+            <div class="core">
+
+                <div class="ring r1"></div>
+                <div class="ring r2"></div>
+                <div class="ring r3"></div>
+
+                <div class="center">
+                    <span>J</span>
+                </div>
+
+            </div>
+
+            <div class="core-status">
+                <span class="status-dot"></span>
+                CORE ACTIVE
+            </div>
+
+        </section>
+
+
+        <!-- ================= SYSTEM STATUS ================= -->
+        <section class="status">
+
+            <div class="section-title">
+                <span>SYSTEM STATUS</span>
+                <small>ONLINE</small>
+            </div>
+
+            <div class="status-line"></div>
+
+            <div class="row">
+                <span>AI CORE</span>
+                <b id="aiStatus" class="on">● ONLINE</b>
+            </div>
+
+            <div class="row">
+                <span>NETWORK</span>
+                <b id="networkStatus" class="on">● ONLINE</b>
+            </div>
+
+            <div class="row">
+                <span>VOICE</span>
+                <b id="voiceStatus" class="off">○ LOCKED</b>
+            </div>
+
+            <div class="row">
+                <span>MEMORY</span>
+                <b id="memoryStatus" class="off">○ LOCKED</b>
+            </div>
+
+        </section>
+
+
+        <!-- ================= CHAT ================= -->
+        <section class="chat-panel">
+
+            <div class="chat-header">
+                <span>J.A.R.V.I.S. COMMUNICATION</span>
+                <span id="chatState">READY</span>
+            </div>
+
+            <div
+                class="chat"
+                id="chat"
+                aria-live="polite"
+            >
+                <!-- Messages appear here -->
+            </div>
+
+        </section>
+
+
+        <!-- ================= INPUT ================= -->
+        <section class="input-area">
+
+            <input
+                id="msg"
+                type="text"
+                autocomplete="off"
+                autocapitalize="sentences"
+                placeholder="Ask J.A.R.V.I.S..."
+                aria-label="Message"
+            >
+
+            <button
+                id="send"
+                type="button"
+            >
+                SEND
+            </button>
+
+        </section>
+
+
+        <!-- ================= VOICE ================= -->
+        <section class="voice-panel">
+
+            <button
+                id="voiceButton"
+                type="button"
+                class="voice-button"
+            >
+                🎙️
+                <span>VOICE</span>
+            </button>
+
+            <div id="voiceHead" class="voice-head">
+                VOICE SYSTEM
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+        <footer class="footer">
+            <span>J.A.R.V.I.S. CORE</span>
+            <span>v1.0 MOBILE</span>
+        </footer>
+
+    </main>
+
+
+    <!-- JavaScript loaded after the page -->
+    <script src="./script.js" defer></script>
+
 </body>
 </html>
