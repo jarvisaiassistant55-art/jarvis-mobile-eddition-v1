@@ -1,29 +1,641 @@
-<link rel="stylesheet" href="style.css">
-@import url('https://fonts.googleapis.com/css2?
-family=Orbitron:wght@400;700&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron'}
-body{background:#000;color:#0ff;padding:20px}
-header{text-align:center}
-header h1{letter-spacing:6px;text-shadow:0 0 12px #0ff}
-header p{font-size:10px;letter-spacing:4px;opacity:.6}
-.core{position:relative;width:160px;height:160px;margin:25px auto}
-.ring{position:absolute;border:2px solid #0ff;border-radius:50%;box-shadow:0 0 15px #0ff}
-.r1{inset:0;border-top-color:transparent;animation:spin 3s linear infinite}
-.r2{inset:20px;border-bottom-color:transparent;animation:spin 2s linear infinite reverse}
-.center{position:absolute;inset:50px;background:#0ff;border-radius:50%;box-shadow:0 0 
-30px #0ff;animation:pulse 1.5s infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{50%{opacity:.4}}
-.core-text{text-align:center;font-size:11px;letter-spacing:3px}
-.status{border:1px solid rgba(0,255,255,.3);background:rgba(0,255,255,.05);padding:
-12px;margin:20px 0}
-.status h2{font-size:12px;letter-spacing:2px;margin-bottom:8px}
-.row{display:flex;justify-content:space-between;font-size:11px;margin:6px 0}
-.on{color:#0f0}.off{color:#f00}
-.chat{border:1px solid rgba(0,255,255,.3);height:150px;overflow-y:auto;padding:10px;font-
-size:12px}
-.msg{margin:6px 0;padding:6px;border-left:2px solid #0ff;background:rgba(0,255,255,.08)}
-.msg.user{border-left-color:#fff}
-.input-area{display:flex;gap:8px;margin-top:12px}
-input{flex:1;background:#000;border:1px solid #0ff;color:#0ff;padding:10px}
-button{background:#0ff;color:#000;border:none;padding:10px 16px;font-weight:bold}
+/* =========================================================
+   J.A.R.V.I.S. — MOBILE EDITION
+   COMPLETE UI CSS
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at 50% 20%, rgba(0, 255, 255, 0.10), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(0, 150, 255, 0.06), transparent 35%),
+        #020608;
+
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   MAIN APP
+   ========================================================= */
+
+.app {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+
+    margin: 0 auto;
+    padding: 18px 14px 16px;
+
+    position: relative;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+    text-align: center;
+    padding-top: 4px;
+}
+
+.system-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: rgba(0, 255, 255, 0.55);
+    margin-bottom: 7px;
+}
+
+.header h1 {
+    font-size: clamp(25px, 8vw, 40px);
+    letter-spacing: 5px;
+    color: #00ffff;
+
+    text-shadow:
+        0 0 5px #00ffff,
+        0 0 15px rgba(0, 255, 255, 0.8),
+        0 0 35px rgba(0, 255, 255, 0.35);
+}
+
+.edition {
+    margin-top: 6px;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: rgba(0, 255, 255, 0.55);
+}
+
+.header-line {
+    width: 75%;
+    height: 1px;
+
+    margin: 14px auto 0;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #00ffff,
+        transparent
+    );
+
+    box-shadow: 0 0 8px #00ffff;
+}
+
+/* =========================================================
+   CORE
+   ========================================================= */
+
+.core-section {
+    text-align: center;
+    padding: 22px 0 18px;
+}
+
+.core {
+    width: 170px;
+    height: 170px;
+
+    margin: 0 auto;
+
+    position: relative;
+
+    filter:
+        drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+}
+
+.ring {
+    position: absolute;
+
+    border-radius: 50%;
+
+    border: 2px solid #00ffff;
+
+    box-shadow:
+        0 0 8px #00ffff,
+        inset 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+/* Outer ring */
+
+.r1 {
+    inset: 0;
+
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 255, 255, 0.8);
+
+    animation: spin 4s linear infinite;
+}
+
+/* Middle ring */
+
+.r2 {
+    inset: 17px;
+
+    border-left-color: transparent;
+    border-right-color: rgba(0, 255, 255, 0.9);
+
+    animation: spinReverse 3s linear infinite;
+}
+
+/* Inner ring */
+
+.r3 {
+    inset: 34px;
+
+    border-top-color: rgba(0, 255, 255, 0.9);
+    border-bottom-color: transparent;
+
+    animation: spin 2s linear infinite;
+}
+
+/* Center */
+
+.center {
+    position: absolute;
+
+    width: 54px;
+    height: 54px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #ffffff 0%,
+            #00ffff 35%,
+            #008c9e 70%,
+            #001b20 100%
+        );
+
+    box-shadow:
+        0 0 10px #00ffff,
+        0 0 25px #00ffff,
+        0 0 50px rgba(0, 255, 255, 0.8);
+
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.center span {
+    color: #001014;
+
+    font-size: 25px;
+    font-weight: 700;
+
+    text-shadow: none;
+}
+
+.core-status {
+    margin-top: 10px;
+
+    font-size: 9px;
+    letter-spacing: 3px;
+
+    color: rgba(0, 255, 255, 0.75);
+}
+
+.status-dot {
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 5px;
+
+    border-radius: 50%;
+
+    background: #00ff66;
+
+    box-shadow:
+        0 0 7px #00ff66,
+        0 0 15px rgba(0, 255, 100, 0.6);
+
+    animation: blink 1.5s infinite;
+}
+
+/* =========================================================
+   STATUS PANEL
+   ========================================================= */
+
+.status {
+    border: 1px solid rgba(0, 255, 255, 0.25);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 255, 255, 0.07),
+            rgba(0, 20, 25, 0.35)
+        );
+
+    padding: 13px;
+
+    margin-bottom: 14px;
+
+    box-shadow:
+        0 0 15px rgba(0, 255, 255, 0.04);
+
+    border-radius: 4px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.section-title small {
+    color: #00ff66;
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+.status-line {
+    height: 1px;
+
+    margin: 9px 0;
+
+    background: linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.5),
+        transparent
+    );
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 5px 0;
+
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.row b {
+    font-size: 8px;
+}
+
+.on {
+    color: #00ff66;
+    text-shadow: 0 0 6px rgba(0, 255, 100, 0.7);
+}
+
+.off {
+    color: #ff4d4d;
+}
+
+/* =========================================================
+   CHAT PANEL
+   ========================================================= */
+
+.chat-panel {
+    border: 1px solid rgba(0, 255, 255, 0.25);
+
+    background: rgba(0, 15, 20, 0.45);
+
+    border-radius: 4px;
+
+    overflow: hidden;
+}
+
+.chat-header {
+    height: 35px;
+
+    padding: 0 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(0, 255, 255, 0.18);
+
+    font-size: 8px;
+    letter-spacing: 1.5px;
+}
+
+#chatState {
+    color: #00ff66;
+}
+
+.chat {
+    height: 155px;
+
+    padding: 10px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+}
+
+.chat::-webkit-scrollbar {
+    width: 3px;
+}
+
+.chat::-webkit-scrollbar-thumb {
+    background: #00ffff;
+}
+
+.chat:empty::before {
+    content: "J.A.R.V.I.S. SYSTEM READY...";
+    display: block;
+
+    color: rgba(0, 255, 255, 0.35);
+
+    font-size: 8px;
+    letter-spacing: 1px;
+}
+
+/* Messages created by JavaScript */
+
+.msg {
+    margin-bottom: 8px;
+
+    padding: 8px 9px;
+
+    border-left: 2px solid #00ffff;
+
+    background: rgba(0, 255, 255, 0.05);
+
+    color: #bfffff;
+
+    font-size: 9px;
+    line-height: 1.5;
+
+    word-break: break-word;
+
+    border-radius: 2px;
+}
+
+.msg.user {
+    border-left-color: #ffffff;
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.msg.ai {
+    border-left-color: #00ffff;
+}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.input-area {
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 10px;
+}
+
+#msg {
+    width: 100%;
+    min-width: 0;
+
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid rgba(0, 255, 255, 0.45);
+    border-radius: 3px;
+
+    outline: none;
+
+    background: rgba(0, 10, 14, 0.9);
+
+    color: #00ffff;
+
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+
+    box-shadow:
+        inset 0 0 10px rgba(0, 255, 255, 0.03);
+}
+
+#msg::placeholder {
+    color: rgba(0, 255, 255, 0.35);
+}
+
+#msg:focus {
+    border-color: #00ffff;
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 255, 0.15),
+        inset 0 0 10px rgba(0, 255, 255, 0.04);
+}
+
+#send {
+    flex: 0 0 78px;
+
+    height: 42px;
+
+    border: 1px solid #00ffff;
+    border-radius: 3px;
+
+    background: #00ffff;
+
+    color: #001014;
+
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 255, 0.35);
+
+    transition: 0.2s;
+}
+
+#send:active {
+    transform: scale(0.96);
+
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+.voice-panel {
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+}
+
+.voice-button {
+    min-width: 110px;
+
+    height: 40px;
+
+    border: 1px solid #00ffff;
+    border-radius: 3px;
+
+    background: rgba(0, 255, 255, 0.08);
+
+    color: #00ffff;
+
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.voice-button:active {
+    transform: scale(0.95);
+}
+
+.voice-head {
+    font-size: 8px;
+
+    letter-spacing: 1px;
+
+    color: rgba(0, 255, 255, 0.45);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 15px;
+    padding-top: 9px;
+
+    border-top: 1px solid rgba(0, 255, 255, 0.12);
+
+    color: rgba(0, 255, 255, 0.35);
+
+    font-size: 7px;
+    letter-spacing: 1px;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinReverse {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(0.82);
+        opacity: 0.65;
+    }
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* =========================================================
+   MOBILE FIT
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .app {
+        padding: 14px 10px;
+    }
+
+    .core {
+        width: 145px;
+        height: 145px;
+    }
+
+    .r2 {
+        inset: 15px;
+    }
+
+    .r3 {
+        inset: 29px;
+    }
+
+    .center {
+        width: 48px;
+        height: 48px;
+    }
+
+    .chat {
+        height: 135px;
+    }
+}
+
+@media (min-width: 600px) {
+
+    .app {
+        padding-top: 30px;
+    }
+}
