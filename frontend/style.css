@@ -1,9 +1,7 @@
 /* =========================================================
-   J.A.R.V.I.S. — MOBILE EDITION
-   COMPLETE UI CSS
+   J.A.R.V.I.S. MOBILE EDITION
+   STABLE FULL-SCREEN UI
    ========================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
 
 * {
     box-sizing: border-box;
@@ -15,548 +13,329 @@ html,
 body {
     width: 100%;
     min-height: 100%;
+    background: #05090d;
+    color: #8eeeff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-    background:
-        radial-gradient(circle at 50% 20%, rgba(0, 255, 255, 0.10), transparent 30%),
-        radial-gradient(circle at 50% 80%, rgba(0, 150, 255, 0.06), transparent 35%),
-        #020608;
-
-    color: #00ffff;
-    font-family: 'Orbitron', monospace;
-
+    min-height: 100vh;
     overflow-x: hidden;
 }
 
-/* =========================================================
-   MAIN APP
-   ========================================================= */
-
 .app {
     width: 100%;
-    max-width: 520px;
     min-height: 100vh;
-
-    margin: 0 auto;
-    padding: 18px 14px 16px;
-
-    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 16px;
+    background:
+        radial-gradient(circle at 50% 22%, rgba(0, 190, 255, 0.12), transparent 28%),
+        linear-gradient(180deg, #071017 0%, #030609 100%);
 }
 
-/* =========================================================
-   HEADER
-   ========================================================= */
+/* ================= HEADER ================= */
 
 .header {
     text-align: center;
-    padding-top: 4px;
+    flex-shrink: 0;
 }
 
 .system-label {
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: rgba(0, 255, 255, 0.55);
-    margin-bottom: 7px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    opacity: 0.65;
 }
 
 .header h1 {
-    font-size: clamp(25px, 8vw, 40px);
+    margin-top: 7px;
+    font-size: 27px;
     letter-spacing: 5px;
-    color: #00ffff;
-
-    text-shadow:
-        0 0 5px #00ffff,
-        0 0 15px rgba(0, 255, 255, 0.8),
-        0 0 35px rgba(0, 255, 255, 0.35);
+    font-weight: 700;
+    text-shadow: 0 0 14px rgba(80, 230, 255, 0.8);
 }
 
 .edition {
-    margin-top: 6px;
-    font-size: 8px;
+    margin-top: 4px;
+    font-size: 9px;
     letter-spacing: 4px;
-    color: rgba(0, 255, 255, 0.55);
+    opacity: 0.6;
 }
 
 .header-line {
     width: 75%;
     height: 1px;
-
-    margin: 14px auto 0;
-
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #00ffff,
-        transparent
-    );
-
-    box-shadow: 0 0 8px #00ffff;
+    margin: 12px auto 0;
+    background: rgba(100, 225, 255, 0.45);
+    box-shadow: 0 0 8px rgba(70, 220, 255, 0.5);
 }
 
-/* =========================================================
-   CORE
-   ========================================================= */
+/* ================= CORE ================= */
 
 .core-section {
-    text-align: center;
-    padding: 22px 0 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0 16px;
+    flex-shrink: 0;
 }
 
 .core {
-    width: 170px;
-    height: 170px;
-
-    margin: 0 auto;
-
+    width: 150px;
+    height: 150px;
     position: relative;
-
-    filter:
-        drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .ring {
     position: absolute;
-
+    border: 1px solid rgba(82, 224, 255, 0.75);
     border-radius: 50%;
-
-    border: 2px solid #00ffff;
-
-    box-shadow:
-        0 0 8px #00ffff,
-        inset 0 0 8px rgba(0, 255, 255, 0.3);
 }
-
-/* Outer ring */
 
 .r1 {
-    inset: 0;
-
-    border-top-color: transparent;
-    border-bottom-color: rgba(0, 255, 255, 0.8);
-
-    animation: spin 4s linear infinite;
+    width: 145px;
+    height: 145px;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    animation: rotate 8s linear infinite;
 }
-
-/* Middle ring */
 
 .r2 {
-    inset: 17px;
-
-    border-left-color: transparent;
-    border-right-color: rgba(0, 255, 255, 0.9);
-
-    animation: spinReverse 3s linear infinite;
+    width: 118px;
+    height: 118px;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    animation: rotateReverse 5s linear infinite;
 }
-
-/* Inner ring */
 
 .r3 {
-    inset: 34px;
-
-    border-top-color: rgba(0, 255, 255, 0.9);
+    width: 88px;
+    height: 88px;
+    border-left-color: transparent;
     border-bottom-color: transparent;
-
-    animation: spin 2s linear infinite;
+    animation: rotate 3s linear infinite;
 }
 
-/* Center */
-
 .center {
-    position: absolute;
-
-    width: 54px;
-    height: 54px;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background:
-        radial-gradient(
-            circle,
-            #ffffff 0%,
-            #00ffff 35%,
-            #008c9e 70%,
-            #001b20 100%
-        );
-
+    background: radial-gradient(circle, #baf8ff 0%, #35dfff 30%, #087c9e 65%, #03151b 100%);
     box-shadow:
-        0 0 10px #00ffff,
-        0 0 25px #00ffff,
-        0 0 50px rgba(0, 255, 255, 0.8);
-
-    animation: pulse 1.5s ease-in-out infinite;
+        0 0 15px #31ddff,
+        0 0 35px rgba(31, 212, 255, 0.65),
+        0 0 65px rgba(31, 212, 255, 0.25);
 }
 
 .center span {
-    color: #001014;
-
+    color: #021016;
     font-size: 25px;
-    font-weight: 700;
-
-    text-shadow: none;
+    font-weight: bold;
 }
 
 .core-status {
     margin-top: 10px;
-
-    font-size: 9px;
-    letter-spacing: 3px;
-
-    color: rgba(0, 255, 255, 0.75);
+    font-size: 10px;
+    letter-spacing: 2px;
 }
 
 .status-dot {
     display: inline-block;
-
     width: 7px;
     height: 7px;
-
     margin-right: 5px;
-
     border-radius: 50%;
-
-    background: #00ff66;
-
-    box-shadow:
-        0 0 7px #00ff66,
-        0 0 15px rgba(0, 255, 100, 0.6);
-
-    animation: blink 1.5s infinite;
+    background: #55efff;
+    box-shadow: 0 0 10px #55efff;
+    animation: pulse 1.5s infinite;
 }
 
-/* =========================================================
-   STATUS PANEL
-   ========================================================= */
+/* ================= STATUS ================= */
 
 .status {
-    border: 1px solid rgba(0, 255, 255, 0.25);
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0, 255, 255, 0.07),
-            rgba(0, 20, 25, 0.35)
-        );
-
-    padding: 13px;
-
-    margin-bottom: 14px;
-
-    box-shadow:
-        0 0 15px rgba(0, 255, 255, 0.04);
-
-    border-radius: 4px;
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid rgba(91, 222, 255, 0.25);
+    background: rgba(4, 20, 27, 0.65);
+    flex-shrink: 0;
 }
 
 .section-title {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
     font-size: 10px;
     letter-spacing: 2px;
 }
 
 .section-title small {
-    color: #00ff66;
-    font-size: 8px;
-    letter-spacing: 1px;
+    color: #58f2ff;
 }
 
 .status-line {
     height: 1px;
-
     margin: 9px 0;
-
-    background: linear-gradient(
-        90deg,
-        rgba(0, 255, 255, 0.5),
-        transparent
-    );
+    background: rgba(100, 225, 255, 0.2);
 }
 
 .row {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
+    align-items: center;
     padding: 5px 0;
-
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 1px;
 }
 
-.row b {
-    font-size: 8px;
-}
-
 .on {
-    color: #00ff66;
-    text-shadow: 0 0 6px rgba(0, 255, 100, 0.7);
+    color: #59f4c4;
 }
 
 .off {
-    color: #ff4d4d;
+    color: #ffca62;
 }
 
-/* =========================================================
-   CHAT PANEL
-   ========================================================= */
+/* ================= CHAT ================= */
 
 .chat-panel {
-    border: 1px solid rgba(0, 255, 255, 0.25);
-
-    background: rgba(0, 15, 20, 0.45);
-
-    border-radius: 4px;
-
+    display: flex;
+    flex-direction: column;
+    min-height: 115px;
+    margin-top: 12px;
+    border: 1px solid rgba(91, 222, 255, 0.25);
+    background: rgba(2, 11, 15, 0.8);
     overflow: hidden;
 }
 
 .chat-header {
-    height: 35px;
-
-    padding: 0 11px;
-
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
-    border-bottom: 1px solid rgba(0, 255, 255, 0.18);
-
-    font-size: 8px;
-    letter-spacing: 1.5px;
+    padding: 9px 11px;
+    border-bottom: 1px solid rgba(91, 222, 255, 0.18);
+    font-size: 9px;
+    letter-spacing: 1px;
 }
 
 #chatState {
-    color: #00ff66;
+    color: #59f4c4;
 }
 
 .chat {
-    height: 155px;
-
+    flex: 1;
+    min-height: 75px;
+    max-height: 145px;
     padding: 10px;
-
     overflow-y: auto;
-    overflow-x: hidden;
-
-    scroll-behavior: smooth;
-}
-
-.chat::-webkit-scrollbar {
-    width: 3px;
-}
-
-.chat::-webkit-scrollbar-thumb {
-    background: #00ffff;
-}
-
-.chat:empty::before {
-    content: "J.A.R.V.I.S. SYSTEM READY...";
-    display: block;
-
-    color: rgba(0, 255, 255, 0.35);
-
-    font-size: 8px;
-    letter-spacing: 1px;
-}
-
-/* Messages created by JavaScript */
-
-.msg {
-    margin-bottom: 8px;
-
-    padding: 8px 9px;
-
-    border-left: 2px solid #00ffff;
-
-    background: rgba(0, 255, 255, 0.05);
-
-    color: #bfffff;
-
-    font-size: 9px;
+    font-size: 12px;
     line-height: 1.5;
-
-    word-break: break-word;
-
-    border-radius: 2px;
 }
 
-.msg.user {
-    border-left-color: #ffffff;
+.message {
+    margin-bottom: 7px;
+}
+
+.user {
     color: #ffffff;
-
-    background: rgba(255, 255, 255, 0.04);
 }
 
-.msg.ai {
-    border-left-color: #00ffff;
+.ai {
+    color: #65eaff;
 }
 
-/* =========================================================
-   INPUT
-   ========================================================= */
+/* ================= INPUT ================= */
 
 .input-area {
     display: flex;
-
-    gap: 7px;
-
+    gap: 8px;
     margin-top: 10px;
+    flex-shrink: 0;
 }
 
 #msg {
-    width: 100%;
+    flex: 1;
     min-width: 0;
-
-    height: 42px;
-
+    height: 43px;
     padding: 0 12px;
-
-    border: 1px solid rgba(0, 255, 255, 0.45);
-    border-radius: 3px;
-
+    border: 1px solid rgba(91, 222, 255, 0.35);
     outline: none;
-
-    background: rgba(0, 10, 14, 0.9);
-
-    color: #00ffff;
-
-    font-family: 'Orbitron', monospace;
-    font-size: 9px;
-
-    box-shadow:
-        inset 0 0 10px rgba(0, 255, 255, 0.03);
+    border-radius: 4px;
+    background: rgba(3, 16, 22, 0.95);
+    color: #dffbff;
+    font-size: 13px;
 }
 
 #msg::placeholder {
-    color: rgba(0, 255, 255, 0.35);
+    color: rgba(142, 238, 255, 0.4);
 }
 
 #msg:focus {
-    border-color: #00ffff;
-
-    box-shadow:
-        0 0 10px rgba(0, 255, 255, 0.15),
-        inset 0 0 10px rgba(0, 255, 255, 0.04);
+    border-color: #5deaff;
+    box-shadow: 0 0 10px rgba(65, 220, 255, 0.2);
 }
 
 #send {
-    flex: 0 0 78px;
-
-    height: 42px;
-
-    border: 1px solid #00ffff;
-    border-radius: 3px;
-
-    background: #00ffff;
-
-    color: #001014;
-
-    font-family: 'Orbitron', monospace;
-    font-size: 9px;
-    font-weight: 700;
-
+    width: 75px;
+    border: 1px solid #5deaff;
+    border-radius: 4px;
+    background: rgba(30, 155, 190, 0.12);
+    color: #75edff;
+    font-size: 10px;
+    font-weight: bold;
     letter-spacing: 1px;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 0 10px rgba(0, 255, 255, 0.35);
-
-    transition: 0.2s;
 }
 
 #send:active {
     transform: scale(0.96);
-
-    box-shadow:
-        0 0 20px rgba(0, 255, 255, 0.8);
 }
 
-/* =========================================================
-   VOICE
-   ========================================================= */
+/* ================= VOICE ================= */
 
 .voice-panel {
-    margin-top: 12px;
-
     display: flex;
     align-items: center;
-    justify-content: center;
-
     gap: 12px;
+    margin-top: 10px;
+    flex-shrink: 0;
 }
 
 .voice-button {
-    min-width: 110px;
-
-    height: 40px;
-
-    border: 1px solid #00ffff;
-    border-radius: 3px;
-
-    background: rgba(0, 255, 255, 0.08);
-
-    color: #00ffff;
-
-    font-family: 'Orbitron', monospace;
-    font-size: 9px;
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.voice-button:active {
-    transform: scale(0.95);
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid rgba(91, 222, 255, 0.5);
+    border-radius: 4px;
+    background: rgba(25, 150, 180, 0.12);
+    color: #73ecff;
+    font-size: 11px;
 }
 
 .voice-head {
-    font-size: 8px;
-
-    letter-spacing: 1px;
-
-    color: rgba(0, 255, 255, 0.45);
+    font-size: 9px;
+    letter-spacing: 2px;
+    opacity: 0.65;
 }
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+/* ================= FOOTER ================= */
 
 .footer {
     display: flex;
-
     justify-content: space-between;
-
-    margin-top: 15px;
-    padding-top: 9px;
-
-    border-top: 1px solid rgba(0, 255, 255, 0.12);
-
-    color: rgba(0, 255, 255, 0.35);
-
-    font-size: 7px;
-    letter-spacing: 1px;
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    opacity: 0.4;
 }
 
-/* =========================================================
-   ANIMATIONS
-   ========================================================= */
+/* ================= ANIMATIONS ================= */
 
-@keyframes spin {
+@keyframes rotate {
     from {
         transform: rotate(0deg);
     }
@@ -566,7 +345,7 @@ body {
     }
 }
 
-@keyframes spinReverse {
+@keyframes rotateReverse {
     from {
         transform: rotate(360deg);
     }
@@ -579,63 +358,55 @@ body {
 @keyframes pulse {
     0%,
     100% {
-        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
+        transform: scale(1);
     }
 
     50% {
-        transform: translate(-50%, -50%) scale(0.82);
-        opacity: 0.65;
+        opacity: 0.35;
+        transform: scale(0.7);
     }
 }
 
-@keyframes blink {
-    0%,
-    100% {
-        opacity: 1;
-    }
+/* ================= SMALL SCREENS ================= */
 
-    50% {
-        opacity: 0.3;
-    }
-}
-
-/* =========================================================
-   MOBILE FIT
-   ========================================================= */
-
-@media (max-width: 380px) {
+@media (max-height: 650px) {
 
     .app {
-        padding: 14px 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .core-section {
+        padding: 10px 0;
     }
 
     .core {
-        width: 145px;
-        height: 145px;
+        width: 115px;
+        height: 115px;
+    }
+
+    .r1 {
+        width: 110px;
+        height: 110px;
     }
 
     .r2 {
-        inset: 15px;
+        width: 88px;
+        height: 88px;
     }
 
     .r3 {
-        inset: 29px;
+        width: 65px;
+        height: 65px;
     }
 
     .center {
-        width: 48px;
-        height: 48px;
+        width: 45px;
+        height: 45px;
     }
 
-    .chat {
-        height: 135px;
-    }
-}
-
-@media (min-width: 600px) {
-
-    .app {
-        padding-top: 30px;
+    .chat-panel {
+        min-height: 90px;
     }
 }
