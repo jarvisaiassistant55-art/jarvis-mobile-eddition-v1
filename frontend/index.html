@@ -1,149 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width,
-          initial-scale=1.0,
-          maximum-scale=1.0,
-          user-scalable=no">
-
-    <title>J.A.R.V.I.S. — Mobile Edition</title>
-
-    <link rel="stylesheet" href="./style.css">
-</head>
-
-<body>
-
-<main class="app">
-
-    <header class="header">
-        <div class="system-label">STARK INDUSTRIES</div>
-        <h1>J.A.R.V.I.S.</h1>
-        <p class="edition">MOBILE EDITION</p>
-        <div class="header-line"></div>
-    </header>
-
-    <section class="core-section">
-        <div class="core">
-            <div class="ring r1"></div>
-            <div class="ring r2"></div>
-            <div class="ring r3"></div>
-
-            <div class="center">
-                <span>J</span>
-            </div>
-        </div>
-
-        <div class="core-status">
-            <span class="status-dot"></span>
-            CORE ACTIVE
-        </div>
-    </section>
-
-    <section class="status">
-
-        <div class="section-title">
-            <span>SYSTEM STATUS</span>
-            <small>ONLINE</small>
-        </div>
-
-        <div class="status-line"></div>
-
-        <div class="row">
-            <span>AI CORE</span>
-            <b class="on">● ONLINE</b>
-        </div>
-
-        <div class="row">
-            <span>NETWORK</span>
-            <b class="on">● ONLINE</b>
-        </div>
-
-        <div class="row">
-            <span>VOICE</span>
-            <b id="voiceStatus" class="off">○ READY</b>
-        </div>
-
-        <div class="row">
-            <span>MEMORY</span>
-            <b class="off">○ LOCKED</b>
-        </div>
-
-    </section>
-
-    <section class="chat-panel">
-
-        <div class="chat-header">
-            <span>J.A.R.V.I.S. COMMUNICATION</span>
-            <span id="chatState">READY</span>
-        </div>
-
-        <div id="chat" class="chat"></div>
-
-    </section>
-
-    <section class="input-area">
-
-        <input
-            id="msg"
-            type="text"
-            autocomplete="off"
-            placeholder="Ask J.A.R.V.I.S..."
-        >
-
-        <button id="send" type="button">
-            SEND
-        </button>
-
-    </section>
-
-    <section class="voice-panel">
-
-        <button id="voiceButton"
-                type="button"
-                class="voice-button">
-            🎙️
-            <span>VOICE</span>
-        </button>
-
-    </section>
-
-    <footer class="footer">
-        <span>J.A.R.V.I.S. CORE</span>
-        <span>v1.0 MOBILE</span>
-    </footer>
-
-</main>
-
-
-<!-- =====================================================
-     J.A.R.V.I.S. JAVASCRIPT
-     ===================================================== -->
-
-<script>
+/* =========================================================
+   J.A.R.V.I.S. — MOBILE EDITION
+   COMPLETE WORKING SCRIPT
+   ========================================================= */
 
 "use strict";
 
-(function () {
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
 
     const chat = document.getElementById("chat");
-    const msg = document.getElementById("msg");
+    const input = document.getElementById("msg");
     const send = document.getElementById("send");
-    const chatState = document.getElementById("chatState");
+
     const voiceButton = document.getElementById("voiceButton");
     const voiceStatus = document.getElementById("voiceStatus");
+    const chatState = document.getElementById("chatState");
+
+    const aiStatus = document.getElementById("aiStatus");
+    const networkStatus = document.getElementById("networkStatus");
+    const memoryStatus = document.getElementById("memoryStatus");
+
+    const voiceHead = document.getElementById("voiceHead");
 
 
-    function addMessage(sender, text, type) {
+    /* =====================================================
+       SAFETY CHECK — MAKE SURE HTML ELEMENTS EXIST
+       ===================================================== */
+
+    if (!chat || !input || !send) {
+        console.error("J.A.R.V.I.S.: Required HTML elements are missing.");
+        return;
+    }
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let unlocked = false;
+    let listening = false;
+    let recognition = null;
+
+
+    /* =====================================================
+       BASIC UI HELPERS
+       ===================================================== */
+
+    function setText(element, text) {
+        if (element) {
+            element.textContent = text;
+        }
+    }
+
+
+    function addMessage(sender, text, type = "ai") {
 
         const message = document.createElement("div");
 
         message.className = "message " + type;
 
-        message.textContent =
-            sender + ": " + text;
+        const senderElement = document.createElement("strong");
+        senderElement.textContent = sender;
+
+        const textElement = document.createElement("span");
+        textElement.textContent = text;
+
+        message.appendChild(senderElement);
+        message.appendChild(textElement);
 
         chat.appendChild(message);
 
@@ -151,217 +77,611 @@
     }
 
 
-    function getReply(text) {
+    function jarvis(text) {
+        addMessage("J.A.R.V.I.S.", text, "ai");
+    }
 
-        const command = text.toLowerCase().trim();
+
+    function userMessage(text) {
+        addMessage("YOU", text, "user");
+    }
 
 
-        if (command.includes("hello") ||
-            command === "hi") {
+    /* =====================================================
+       STATUS
+       ===================================================== */
 
-            return "Hello, Boss. J.A.R.V.I.S. is online.";
+    function setLocked() {
+
+        unlocked = false;
+
+        if (voiceStatus) {
+            voiceStatus.textContent = "○ LOCKED";
+            voiceStatus.className = "off";
+        }
+
+        setText(chatState, "LOCKED");
+
+        if (voiceHead) {
+            voiceHead.textContent = "VOICE SYSTEM — LOCKED";
+        }
+
+        if (memoryStatus) {
+            memoryStatus.textContent = "○ LOCKED";
+            memoryStatus.className = "off";
+        }
+    }
+
+
+    function setUnlocked() {
+
+        unlocked = true;
+
+        if (voiceStatus) {
+            voiceStatus.textContent = "● UNLOCKED";
+            voiceStatus.className = "on";
+        }
+
+        setText(chatState, "READY");
+
+        if (voiceHead) {
+            voiceHead.textContent = "VOICE SYSTEM — READY";
+        }
+
+        if (memoryStatus) {
+            memoryStatus.textContent = "● READY";
+            memoryStatus.className = "on";
+        }
+    }
+
+
+    /* =====================================================
+       VOICE UNLOCK
+       ===================================================== */
+
+    function unlockJarvis() {
+
+        if (unlocked) {
+            jarvis("Voice system is already unlocked, Boss.");
+            return;
+        }
+
+        setUnlocked();
+
+        jarvis("Voice authentication phrase accepted. Systems ready, Boss.");
+    }
+
+
+    function lockJarvis() {
+
+        setLocked();
+
+        jarvis("Voice system locked.");
+    }
+
+
+    /* =====================================================
+       AI REPLY ENGINE
+       ===================================================== */
+
+    function getReply(message) {
+
+        const text = message.toLowerCase().trim();
+
+
+        /* GREETING */
+
+        if (
+            text === "hello" ||
+            text === "hi" ||
+            text === "hey" ||
+            text.includes("hello jarvis")
+        ) {
+            return "Good to hear from you, Boss. All systems are operational.";
         }
 
 
-        if (command.includes("how are you")) {
+        /* WHO ARE YOU */
 
+        if (
+            text.includes("who are you") ||
+            text.includes("what are you")
+        ) {
+            return "I am J.A.R.V.I.S., your mobile assistant interface.";
+        }
+
+
+        /* HOW ARE YOU */
+
+        if (
+            text.includes("how are you") ||
+            text.includes("how are things")
+        ) {
             return "All systems are operating normally, Boss.";
         }
 
 
-        if (command.includes("who are you")) {
+        /* TIME */
 
-            return "I am J.A.R.V.I.S., your personal AI assistant.";
-        }
+        if (
+            text === "time" ||
+            text.includes("what time") ||
+            text.includes("current time")
+        ) {
 
-
-        if (command.includes("time")) {
+            const now = new Date();
 
             return "The current time is " +
-                new Date().toLocaleTimeString();
+                now.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }) +
+                ".";
         }
 
 
-        if (command.includes("date")) {
+        /* DATE */
 
-            return "Today's date is " +
-                new Date().toLocaleDateString();
+        if (
+            text === "date" ||
+            text.includes("what date") ||
+            text.includes("today's date") ||
+            text.includes("today date")
+        ) {
+
+            const now = new Date();
+
+            return "Today is " +
+                now.toLocaleDateString([], {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                }) +
+                ".";
         }
 
 
-        if (command.includes("status")) {
+        /* STATUS */
 
-            return "AI Core online. Network online. J.A.R.V.I.S. ready.";
+        if (
+            text.includes("status") ||
+            text.includes("system status")
+        ) {
+            return "AI core online. Network interface online. Voice system " +
+                (unlocked ? "unlocked" : "locked") +
+                ".";
         }
 
 
-        if (command.includes("help")) {
+        /* MEMORY */
 
-            return "Try saying hello, asking for the time, date, or system status.";
+        if (
+            text.includes("memory") ||
+            text.includes("memories")
+        ) {
+
+            if (!unlocked) {
+                return "Memory access requires voice unlock.";
+            }
+
+            return "Memory interface is ready. No external memory database is connected yet.";
         }
 
 
-        return "Command received, Boss. Online AI connection is not configured yet.";
+        /* LOCK */
+
+        if (
+            text === "lock" ||
+            text.includes("lock jarvis") ||
+            text.includes("lock system")
+        ) {
+            setTimeout(lockJarvis, 100);
+            return "Locking the voice interface.";
+        }
+
+
+        /* HELP */
+
+        if (
+            text === "help" ||
+            text.includes("what can you do")
+        ) {
+            return "You can ask me the time, date, system status, memory status, or use the voice interface.";
+        }
+
+
+        /* THANK YOU */
+
+        if (
+            text.includes("thank you") ||
+            text.includes("thanks")
+        ) {
+            return "You're welcome, Boss.";
+        }
+
+
+        /* UNKNOWN COMMAND */
+
+        return "I received your command, Boss. My basic local AI engine does not have an answer for that yet.";
     }
 
 
+    /* =====================================================
+       SEND MESSAGE
+       ===================================================== */
+
     function sendMessage() {
 
-        const text = msg.value.trim();
+        const text = input.value.trim();
 
         if (!text) {
             return;
         }
 
 
-        addMessage(
-            "YOU",
-            text,
-            "user"
-        );
+        /* SHOW USER MESSAGE */
+
+        userMessage(text);
+
+        input.value = "";
 
 
-        msg.value = "";
+        /* LOCK CHECK */
 
+        if (!unlocked) {
 
-        if (chatState) {
-            chatState.textContent = "PROCESSING";
+            const lower = text.toLowerCase();
+
+            if (
+                lower.includes("jarvis") &&
+                (
+                    lower.includes("unlock") ||
+                    lower.includes("activate") ||
+                    lower.includes("wake")
+                )
+            ) {
+
+                unlockJarvis();
+                return;
+            }
+
+            jarvis("Voice system is locked. Say \"Jarvis\" using the voice button to unlock the interface.");
+
+            return;
         }
 
 
-        setTimeout(function () {
+        /* PROCESSING */
 
-            const response = getReply(text);
+        setText(chatState, "PROCESSING");
 
-
-            addMessage(
-                "J.A.R.V.I.S.",
-                response,
-                "ai"
-            );
+        const reply = getReply(text);
 
 
-            if (chatState) {
-                chatState.textContent = "READY";
-            }
+        /* SMALL DELAY */
 
-        }, 500);
+        setTimeout(() => {
 
+            jarvis(reply);
+
+            setText(chatState, "READY");
+
+        }, 400);
     }
 
 
-    // SEND BUTTON
+    /* =====================================================
+       SEND BUTTON
+       ===================================================== */
 
-    send.addEventListener(
-        "click",
-        sendMessage
-    );
+    send.addEventListener("click", (event) => {
+
+        event.preventDefault();
+
+        sendMessage();
+
+    });
 
 
-    // ENTER KEY
+    /* =====================================================
+       ENTER KEY
+       ===================================================== */
 
-    msg.addEventListener(
-        "keydown",
-        function (event) {
+    input.addEventListener("keydown", (event) => {
 
-            if (event.key === "Enter") {
+        if (event.key === "Enter") {
 
-                event.preventDefault();
+            event.preventDefault();
 
-                sendMessage();
+            sendMessage();
+        }
+
+    });
+
+
+    /* =====================================================
+       VOICE RECOGNITION
+       ===================================================== */
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if (!SpeechRecognition) {
+
+        if (voiceButton) {
+            voiceButton.disabled = false;
+        }
+
+        if (voiceHead) {
+            voiceHead.textContent =
+                "VOICE SYSTEM — BROWSER NOT SUPPORTED";
+        }
+
+    } else {
+
+        recognition = new SpeechRecognition();
+
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+
+        /* ================================================
+           VOICE START
+           ================================================ */
+
+        recognition.onstart = () => {
+
+            listening = true;
+
+            setText(chatState, "LISTENING");
+
+            if (voiceHead) {
+                voiceHead.textContent = "LISTENING...";
             }
 
-        }
-    );
+            if (voiceButton) {
+                voiceButton.classList.add("active");
+            }
+        };
 
 
-    // STARTUP MESSAGE
+        /* ================================================
+           VOICE RESULT
+           ================================================ */
 
-    addMessage(
-        "J.A.R.V.I.S.",
-        "Systems online. How may I assist you, Boss?",
-        "ai"
-    );
+        recognition.onresult = (event) => {
+
+            const transcript =
+                event.results[0][0].transcript
+                    .toLowerCase()
+                    .trim();
+
+            console.log("Voice:", transcript);
 
 
-    // VOICE
+            /* SHOW WHAT WAS HEARD */
+
+            if (voiceHead) {
+                voiceHead.textContent =
+                    "HEARD: " + transcript;
+            }
+
+
+            /* ============================================
+               UNLOCK PHRASE
+               ============================================ */
+
+            if (
+                transcript.includes("jarvis") ||
+                transcript.includes("hey jarvis") ||
+                transcript.includes("okay jarvis")
+            ) {
+
+                if (!unlocked) {
+
+                    unlockJarvis();
+
+                } else {
+
+                    jarvis("I'm listening, Boss.");
+                }
+
+                return;
+            }
+
+
+            /* ============================================
+               IF ALREADY UNLOCKED
+               ============================================ */
+
+            if (unlocked) {
+
+                input.value = transcript;
+
+                sendMessage();
+
+            } else {
+
+                jarvis(
+                    "Voice system is locked. Please say Jarvis to unlock."
+                );
+            }
+        };
+
+
+        /* ================================================
+           VOICE END
+           ================================================ */
+
+        recognition.onend = () => {
+
+            listening = false;
+
+            if (voiceButton) {
+                voiceButton.classList.remove("active");
+            }
+
+            if (voiceHead) {
+
+                voiceHead.textContent =
+                    unlocked
+                        ? "VOICE SYSTEM — READY"
+                        : "VOICE SYSTEM — LOCKED";
+            }
+
+            setText(
+                chatState,
+                unlocked ? "READY" : "LOCKED"
+            );
+        };
+
+
+        /* ================================================
+           VOICE ERROR
+           ================================================ */
+
+        recognition.onerror = (event) => {
+
+            console.error(
+                "Speech recognition error:",
+                event.error
+            );
+
+            listening = false;
+
+            if (voiceButton) {
+                voiceButton.classList.remove("active");
+            }
+
+            if (voiceHead) {
+
+                if (event.error === "not-allowed") {
+
+                    voiceHead.textContent =
+                        "MICROPHONE PERMISSION DENIED";
+
+                } else if (event.error === "no-speech") {
+
+                    voiceHead.textContent =
+                        "NO SPEECH DETECTED";
+
+                } else {
+
+                    voiceHead.textContent =
+                        "VOICE ERROR: " + event.error;
+                }
+            }
+
+            setText(
+                chatState,
+                unlocked ? "READY" : "LOCKED"
+            );
+        };
+    }
+
+
+    /* =====================================================
+       VOICE BUTTON
+       ===================================================== */
 
     if (voiceButton) {
 
-        voiceButton.addEventListener(
-            "click",
-            function () {
+        voiceButton.addEventListener("click", async () => {
 
-                const Recognition =
-                    window.SpeechRecognition ||
-                    window.webkitSpeechRecognition;
+            if (!recognition) {
+
+                jarvis(
+                    "Voice recognition is not supported by this browser."
+                );
+
+                return;
+            }
 
 
-                if (!Recognition) {
+            if (listening) {
 
-                    if (voiceStatus) {
-                        voiceStatus.textContent =
-                            "○ NOT SUPPORTED";
-                    }
-
-                    return;
+                try {
+                    recognition.stop();
+                } catch (error) {
+                    console.log(error);
                 }
 
-
-                const recognition =
-                    new Recognition();
-
-
-                recognition.lang = "en-US";
-                recognition.continuous = false;
-                recognition.interimResults = false;
+                return;
+            }
 
 
-                if (voiceStatus) {
-                    voiceStatus.textContent =
-                        "● LISTENING";
+            /* ============================================
+               REQUEST MICROPHONE PERMISSION
+               ============================================ */
+
+            try {
+
+                if (
+                    navigator.mediaDevices &&
+                    navigator.mediaDevices.getUserMedia
+                ) {
+
+                    const stream =
+                        await navigator.mediaDevices.getUserMedia({
+                            audio: true
+                        });
+
+                    stream.getTracks().forEach(track => {
+                        track.stop();
+                    });
                 }
 
+            } catch (error) {
+
+                console.error(
+                    "Microphone permission error:",
+                    error
+                );
+
+                if (voiceHead) {
+                    voiceHead.textContent =
+                        "ALLOW MICROPHONE ACCESS";
+                }
+
+                jarvis(
+                    "Microphone access is required for voice control. Please allow microphone permission and try again."
+                );
+
+                return;
+            }
+
+
+            /* ============================================
+               START RECOGNITION
+               ============================================ */
+
+            try {
 
                 recognition.start();
 
+            } catch (error) {
 
-                recognition.onresult =
-                    function (event) {
-
-                        const spoken =
-                            event.results[0][0].transcript;
-
-
-                        msg.value = spoken;
-
-                        sendMessage();
-                    };
-
-
-                recognition.onend =
-                    function () {
-
-                        if (voiceStatus) {
-                            voiceStatus.textContent =
-                                "○ READY";
-                        }
-
-                    };
-
+                console.error(
+                    "Recognition start error:",
+                    error
+                );
             }
-        );
 
+        });
     }
 
 
-    console.log(
-        "J.A.R.V.I.S. SYSTEM ONLINE"
-    );
+    /* =====================================================
+       INITIAL SYSTEM STATE
+       ===================================================== */
 
-})();
+    if (aiStatus) {
+        aiStatus.textContent = "● ONLINE";
+        aiStatus.className = "on";
+    }
 
-</script>
-
-</body>
-</html>
+    if (networkStatus) {
