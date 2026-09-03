@@ -1,133 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* =========================================================
+   J.A.R.V.I.S. — STABLE REPLACEMENT SCRIPT
+   Chat + Send Button + Enter Key + Voice Input
+   ========================================================= */
 
-<title>J.A.R.V.I.S.</title>
+"use strict";
 
-<style>
-* {
-    box-sizing: border-box;
-}
+document.addEventListener("DOMContentLoaded", () => {
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #05090d;
-    color: #8eeeff;
-    font-family: Arial, sans-serif;
-}
-
-.app {
-    min-height: 100vh;
-    padding: 20px 16px;
-}
-
-h1 {
-    text-align: center;
-    letter-spacing: 5px;
-}
-
-.chat {
-    height: 300px;
-    margin-top: 25px;
-    padding: 15px;
-    border: 1px solid #2bdcff;
-    overflow-y: auto;
-    background: #020b0f;
-}
-
-.message {
-    margin-bottom: 12px;
-}
-
-.user {
-    color: white;
-}
-
-.ai {
-    color: #65eaff;
-}
-
-.input-area {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-#msg {
-    flex: 1;
-    height: 45px;
-    padding: 10px;
-    background: #07151b;
-    border: 1px solid #2bdcff;
-    color: white;
-    outline: none;
-}
-
-#send {
-    width: 80px;
-    background: #08232b;
-    border: 1px solid #2bdcff;
-    color: #65eaff;
-}
-
-#voiceButton {
-    width: 100%;
-    height: 45px;
-    margin-top: 10px;
-    background: #08232b;
-    border: 1px solid #2bdcff;
-    color: #65eaff;
-}
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-    <h1>J.A.R.V.I.S.</h1>
-
-    <div id="chat" class="chat">
-        <div class="message ai">
-            J.A.R.V.I.S.: Systems online, Boss.
-        </div>
-    </div>
-
-    <div class="input-area">
-
-        <input
-            id="msg"
-            type="text"
-            placeholder="Ask J.A.R.V.I.S..."
-        >
-
-        <button id="send" type="button">
-            SEND
-        </button>
-
-    </div>
-
-    <button id="voiceButton" type="button">
-        🎙️ VOICE
-    </button>
-
-</div>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
+    // ---------------------------------------------------------
+    // GET ELEMENTS
+    // ---------------------------------------------------------
 
     const chat = document.getElementById("chat");
     const input = document.getElementById("msg");
     const send = document.getElementById("send");
-    const voiceButton = document.getElementById("voiceButton");
 
-    /* =========================
-       SEND
-       ========================= */
+    const voiceButton = document.getElementById("voiceButton");
+    const voiceStatus = document.getElementById("voiceStatus");
+
+    // ---------------------------------------------------------
+    // SAFETY CHECK
+    // ---------------------------------------------------------
+
+    if (!chat || !input || !send) {
+        console.error("J.A.R.V.I.S.: Required elements not found.");
+        return;
+    }
+
+    console.log("J.A.R.V.I.S.: Script loaded successfully.");
+
+    // ---------------------------------------------------------
+    // ADD MESSAGE
+    // ---------------------------------------------------------
+
+    function addMessage(sender, text, type) {
+
+        const message = document.createElement("div");
+
+        message.className = "message " + (type || "");
+
+        message.textContent = sender + ": " + text;
+
+        chat.appendChild(message);
+
+        chat.scrollTop = chat.scrollHeight;
+
+        return message;
+    }
+
+    // ---------------------------------------------------------
+    // JARVIS RESPONSE
+    // ---------------------------------------------------------
+
+    function getJarvisReply(text) {
+
+        const command = text.toLowerCase().trim();
+
+        if (
+            command === "hello" ||
+            command === "hi" ||
+            command.includes("hello jarvis") ||
+            command.includes("hi jarvis")
+        ) {
+            return "Hello, Boss. Systems are online. How may I assist you?";
+        }
+
+        if (
+            command.includes("how are you") ||
+            command.includes("how are things")
+        ) {
+            return "All systems are functioning normally, Boss.";
+        }
+
+        if (
+            command.includes("who are you") ||
+            command.includes("what are you")
+        ) {
+            return "I am J.A.R.V.I.S., your personal digital assistant.";
+        }
+
+        if (
+            command.includes("time")
+        ) {
+            return "The current time is " +
+                new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }) + ".";
+        }
+
+        if (
+            command.includes("date") ||
+            command.includes("today")
+        ) {
+            return "Today is " +
+                new Date().toLocaleDateString([], {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                }) + ".";
+        }
+
+        if (
+            command.includes("thank")
+        ) {
+            return "You're welcome, Boss.";
+        }
+
+        if (
+            command.includes("good morning")
+        ) {
+            return "Good morning, Boss. J.A.R.V.I.S. is ready.";
+        }
+
+        if (
+            command.includes("good night")
+        ) {
+            return "Good night, Boss. Systems will remain ready.";
+        }
+
+        if (
+            command.includes("status") ||
+            command.includes("system status")
+        ) {
+            return "All local J.A.R.V.I.S. systems are operational.";
+        }
+
+        if (
+            command.includes("help")
+        ) {
+            return "You can ask me about the time, date, system status, or simply say hello.";
+        }
+
+        return "I received your message, Boss. Online AI connection is not configured yet.";
+    }
+
+    // ---------------------------------------------------------
+    // SEND MESSAGE
+    // ---------------------------------------------------------
 
     function sendMessage() {
 
@@ -137,131 +148,197 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const userMessage =
-            document.createElement("div");
+        // Show user message
+        addMessage("YOU", text, "user");
 
-        userMessage.className =
-            "message user";
-
-        userMessage.textContent =
-            "YOU: " + text;
-
-        chat.appendChild(userMessage);
-
-        const reply =
-            document.createElement("div");
-
-        reply.className =
-            "message ai";
-
-        reply.textContent =
-            "J.A.R.V.I.S.: I heard you, Boss. Systems are working.";
-
-        chat.appendChild(reply);
-
+        // Clear input
         input.value = "";
 
-        chat.scrollTop = chat.scrollHeight;
+        // Disable temporarily
+        send.disabled = true;
 
-        /* Speak */
+        // Processing message
+        const processing = addMessage(
+            "J.A.R.V.I.S.",
+            "Processing...",
+            "ai"
+        );
 
-        if ("speechSynthesis" in window) {
+        // Small response delay
+        setTimeout(() => {
 
-            speechSynthesis.cancel();
+            const reply = getJarvisReply(text);
 
-            const speech =
-                new SpeechSynthesisUtterance(
-                    "I heard you, Boss. Systems are working."
-                );
+            processing.textContent =
+                "J.A.R.V.I.S.: " + reply;
 
-            speech.lang = "en-IN";
+            chat.scrollTop = chat.scrollHeight;
 
-            speechSynthesis.speak(speech);
+            send.disabled = false;
+
+            input.focus();
+
+            // Optional voice response
+            speak(reply);
+
+        }, 600);
+    }
+
+    // ---------------------------------------------------------
+    // SEND BUTTON
+    // ---------------------------------------------------------
+
+    send.addEventListener("click", (event) => {
+
+        event.preventDefault();
+
+        sendMessage();
+
+    });
+
+    // ---------------------------------------------------------
+    // ENTER KEY
+    // ---------------------------------------------------------
+
+    input.addEventListener("keydown", (event) => {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    });
+
+    // ---------------------------------------------------------
+    // VOICE OUTPUT
+    // ---------------------------------------------------------
+
+    function speak(text) {
+
+        if (!("speechSynthesis" in window)) {
+            return;
+        }
+
+        try {
+
+            window.speechSynthesis.cancel();
+
+            const speech = new SpeechSynthesisUtterance(text);
+
+            speech.rate = 1;
+            speech.pitch = 1;
+            speech.volume = 1;
+
+            window.speechSynthesis.speak(speech);
+
+        } catch (error) {
+
+            console.log("Voice output unavailable:", error);
+
         }
     }
 
-    send.addEventListener(
-        "click",
-        sendMessage
-    );
-
-    input.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Enter") {
-
-                event.preventDefault();
-
-                sendMessage();
-            }
-        }
-    );
-
-    /* =========================
-       VOICE INPUT
-       ========================= */
+    // ---------------------------------------------------------
+    // VOICE INPUT
+    // ---------------------------------------------------------
 
     const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
+    if (voiceButton && SpeechRecognition) {
 
-        voiceButton.textContent =
-            "🎙️ VOICE NOT SUPPORTED";
+        const recognition = new SpeechRecognition();
 
-        return;
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        voiceButton.addEventListener("click", () => {
+
+            try {
+
+                recognition.start();
+
+                if (voiceStatus) {
+                    voiceStatus.textContent = "Listening...";
+                }
+
+            } catch (error) {
+
+                console.log("Voice already active.");
+
+            }
+
+        });
+
+        recognition.onresult = (event) => {
+
+            const transcript =
+                event.results[0][0].transcript;
+
+            input.value = transcript;
+
+            if (voiceStatus) {
+                voiceStatus.textContent = "Voice received";
+            }
+
+            sendMessage();
+
+        };
+
+        recognition.onerror = (event) => {
+
+            console.log("Voice error:", event.error);
+
+            if (voiceStatus) {
+                voiceStatus.textContent = "Voice unavailable";
+            }
+
+        };
+
+        recognition.onend = () => {
+
+            if (voiceStatus) {
+                voiceStatus.textContent = "Ready";
+            }
+
+        };
+
+    } else if (voiceButton) {
+
+        voiceButton.addEventListener("click", () => {
+
+            if (voiceStatus) {
+                voiceStatus.textContent =
+                    "Voice recognition is not supported.";
+            }
+
+        });
+
     }
 
-    const recognition =
-        new SpeechRecognition();
+    // ---------------------------------------------------------
+    // INITIAL MESSAGE
+    // ---------------------------------------------------------
 
-    recognition.lang = "en-IN";
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    if (chat.children.length === 0) {
 
-    voiceButton.onclick = function () {
-
-        try {
-            recognition.start();
-            voiceButton.textContent =
-                "🔴 LISTENING...";
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    recognition.onresult = function (event) {
-
-        const text =
-            event.results[0][0].transcript;
-
-        input.value = text;
-
-        sendMessage();
-    };
-
-    recognition.onend = function () {
-
-        voiceButton.textContent =
-            "🎙️ VOICE";
-    };
-
-    recognition.onerror = function (event) {
-
-        console.log(
-            "Voice error:",
-            event.error
+        addMessage(
+            "J.A.R.V.I.S.",
+            "Systems online. How may I assist you, Boss?",
+            "ai"
         );
 
-        voiceButton.textContent =
-            "🎙️ VOICE";
-    };
+    }
+
+    // ---------------------------------------------------------
+    // FOCUS INPUT
+    // ---------------------------------------------------------
+
+    input.focus();
 
 });
-
-</script>
-
-</body>
-</html>
