@@ -1,78 +1,55 @@
 "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 
     const chat = document.getElementById("chat");
     const input = document.getElementById("msg");
     const send = document.getElementById("send");
 
-    const voiceButton = document.getElementById("voiceButton");
     const voiceStatus = document.getElementById("voiceStatus");
     const memoryStatus = document.getElementById("memoryStatus");
     const chatState = document.getElementById("chatState");
-    const voiceHead = document.getElementById("voiceHead");
 
     let unlocked = false;
-    let listening = false;
-    let recognition = null;
 
-    /* =====================================================
+
+    /* ================================
        MEMORY
-       ===================================================== */
+       ================================ */
 
-    let memories = JSON.parse(
-        localStorage.getItem("jarvis_memories") || "[]"
-    );
+    let memories = [];
 
-    function saveMemories() {
+    try {
+        memories = JSON.parse(
+            localStorage.getItem("jarvis_memories") || "[]"
+        );
+    } catch (error) {
+        memories = [];
+    }
+
+
+    function saveMemory(text) {
+
+        memories.push({
+            text: text,
+            date: new Date().toLocaleString()
+        });
+
         localStorage.setItem(
             "jarvis_memories",
             JSON.stringify(memories)
         );
     }
 
-    function addMemory(text) {
-        memories.push({
-            text: text,
-            time: new Date().toLocaleString()
-        });
 
-        saveMemories();
-    }
-
-    function showMemories() {
-
-        if (memories.length === 0) {
-            jarvis("Memory database is empty, Boss.");
-            return;
-        }
-
-        jarvis("I found " + memories.length + " stored memories.");
-
-        memories.forEach((memory, index) => {
-
-            addMessage(
-                "MEMORY " + (index + 1),
-                memory.text + " — " + memory.time,
-                "ai"
-            );
-
-        });
-    }
-
-    function clearMemories() {
-
-        memories = [];
-
-        saveMemories();
-
-        jarvis("Memory database cleared.");
+    function getMemories() {
+        return memories;
     }
 
 
-    /* =====================================================
+    /* ================================
        CHAT
-       ===================================================== */
+       ================================ */
 
     function addMessage(sender, text, type) {
 
@@ -81,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         message.className = "message " + type;
 
         const title = document.createElement("strong");
-        title.textContent = sender;
+        title.textContent = sender + ": ";
 
         const content = document.createElement("span");
         content.textContent = text;
@@ -94,20 +71,22 @@ document.addEventListener("DOMContentLoaded", () => {
         chat.scrollTop = chat.scrollHeight;
     }
 
+
     function jarvis(text) {
         addMessage("J.A.R.V.I.S.", text, "ai");
     }
+
 
     function userMessage(text) {
         addMessage("YOU", text, "user");
     }
 
 
-    /* =====================================================
-       LOCK / UNLOCK
-       ===================================================== */
+    /* ================================
+       UNLOCK
+       ================================ */
 
-    function unlockJarvis() {
+    function unlockSystem() {
 
         unlocked = true;
 
@@ -125,17 +104,17 @@ document.addEventListener("DOMContentLoaded", () => {
             chatState.textContent = "READY";
         }
 
-        if (voiceHead) {
-            voiceHead.textContent = "VOICE + MEMORY READY";
-        }
-
         jarvis(
             "Voice and memory systems unlocked, Boss."
         );
     }
 
 
-    function lockJarvis() {
+    /* ================================
+       LOCK
+       ================================ */
+
+    function lockSystem() {
 
         unlocked = false;
 
@@ -153,500 +132,334 @@ document.addEventListener("DOMContentLoaded", () => {
             chatState.textContent = "LOCKED";
         }
 
-        if (voiceHead) {
-            voiceHead.textContent = "VOICE + MEMORY LOCKED";
-        }
-
-        jarvis("Voice and memory systems locked.");
+        jarvis(
+            "Voice and memory systems locked."
+        );
     }
 
 
-    /* =====================================================
-       REPLY ENGINE
-       ===================================================== */
+    /* ================================
+       SHOW MEMORY
+       ================================ */
 
-    function getReply(text) {
+    function showMemories() {
 
-        const t = text.toLowerCase().trim();
+        if (memories.length === 0) {
 
+            jarvis(
+                "My memory database is currently empty."
+            );
 
-        if (t === "hello" || t === "hi" || t === "hey") {
-            return "Good to hear from you, Boss. All systems are operational.";
+            return;
         }
 
+
+        jarvis(
+            "I remember " +
+            memories.length +
+            " item" +
+            (memories.length === 1 ? "" : "s") +
+            ", Boss."
+        );
+
+
+        memories.forEach(function (memory, index) {
+
+            addMessage(
+                "MEMORY " + (index + 1),
+                memory.text,
+                "ai"
+            );
+
+        });
+    }
+
+
+    /* ================================
+       CLEAR MEMORY
+       ================================ */
+
+    function clearMemories() {
+
+        memories = [];
+
+        localStorage.removeItem(
+            "jarvis_memories"
+        );
+
+        jarvis(
+            "Memory database cleared, Boss."
+        );
+    }
+
+
+    /* ================================
+       FIND MEMORY
+       ================================ */
+
+    function searchMemory(keyword) {
+
+        const results = memories.filter(function (memory) {
+
+            return memory.text
+                .toLowerCase()
+                .includes(keyword.toLowerCase());
+
+        });
+
+
+        if (results.length === 0) {
+
+            jarvis(
+                "I couldn't find that in my memory."
+            );
+
+            return;
+        }
+
+
+        results.forEach(function (memory) {
+
+            addMessage(
+                "MEMORY",
+                memory.text,
+                "ai"
+            );
+
+        });
+    }
+
+
+    /* ================================
+       COMMAND PROCESSOR
+       ================================ */
+
+    function processCommand(command) {
+
+        const text = command.toLowerCase().trim();
+
+
+        /* ==============================
+           UNLOCK
+           ============================== */
 
         if (
-            t.includes("who are you") ||
-            t.includes("what are you")
+            text === "unlock" ||
+            text === "unlock jarvis" ||
+            text === "activate jarvis" ||
+            text === "wake jarvis"
         ) {
-            return "I am J.A.R.V.I.S., your mobile assistant interface.";
+
+            unlockSystem();
+
+            return;
         }
 
 
-        if (t.includes("how are you")) {
-            return "All systems are operating normally, Boss.";
-        }
-
-
-        /* TIME */
+        /* ==============================
+           LOCK
+           ============================== */
 
         if (
-            t === "time" ||
-            t.includes("what time")
+            text === "lock" ||
+            text === "lock jarvis" ||
+            text === "lock system"
         ) {
 
-            return "The current time is " +
+            lockSystem();
+
+            return;
+        }
+
+
+        /* ==============================
+           LOCK CHECK
+           ============================== */
+
+        if (!unlocked) {
+
+            jarvis(
+                'System locked. Type "unlock jarvis" to activate me.'
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           HELLO
+           ============================== */
+
+        if (
+            text === "hello" ||
+            text === "hi" ||
+            text === "hey"
+        ) {
+
+            jarvis(
+                "Hello Boss. All systems are operational."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           WHO ARE YOU
+           ============================== */
+
+        if (
+            text.includes("who are you") ||
+            text.includes("what are you")
+        ) {
+
+            jarvis(
+                "I am J.A.R.V.I.S., your mobile assistant."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           HOW ARE YOU
+           ============================== */
+
+        if (text.includes("how are you")) {
+
+            jarvis(
+                "All systems are operating normally, Boss."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           TIME
+           ============================== */
+
+        if (
+            text === "time" ||
+            text.includes("what time")
+        ) {
+
+            jarvis(
+                "The current time is " +
                 new Date().toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit"
-                }) + ".";
+                }) +
+                "."
+            );
+
+            return;
         }
 
 
-        /* DATE */
+        /* ==============================
+           DATE
+           ============================== */
 
         if (
-            t === "date" ||
-            t.includes("what date") ||
-            t.includes("today date")
+            text === "date" ||
+            text.includes("today")
         ) {
 
-            return "Today is " +
+            jarvis(
+                "Today is " +
                 new Date().toLocaleDateString([], {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
                     day: "numeric"
-                }) + ".";
+                }) +
+                "."
+            );
+
+            return;
         }
 
 
-        /* STATUS */
+        /* ==============================
+           STATUS
+           ============================== */
 
-        if (t.includes("status")) {
+        if (text.includes("status")) {
 
-            return "AI core online. Network online. Voice " +
-                (unlocked ? "unlocked" : "locked") +
-                ". Memory " +
-                (unlocked ? "unlocked" : "locked") +
-                ".";
+            jarvis(
+                "AI Core ONLINE. Network ONLINE. " +
+                "Voice UNLOCKED. Memory UNLOCKED."
+            );
+
+            return;
         }
 
 
-        /* SAVE MEMORY */
+        /* ==============================
+           REMEMBER
+           ============================== */
 
         if (
-            t.startsWith("remember ") ||
-            t.startsWith("remember that ")
+            text.startsWith("remember ")
         ) {
 
-            let memory = text
-                .replace(/^remember that /i, "")
-                .replace(/^remember /i, "")
+            const memory = command
+                .substring(9)
                 .trim();
 
             if (!memory) {
-                return "Tell me what you want me to remember.";
-            }
-
-            addMemory(memory);
-
-            return "Memory saved, Boss.";
-        }
-
-
-        /* SHOW MEMORY */
-
-        if (
-            t.includes("show my memories") ||
-            t.includes("show memories") ||
-            t === "memory" ||
-            t === "memories"
-        ) {
-
-            showMemories();
-
-            return null;
-        }
-
-
-        /* MEMORY COUNT */
-
-        if (
-            t.includes("how many memories") ||
-            t.includes("memory count")
-        ) {
-
-            return "I currently have " +
-                memories.length +
-                " stored memories.";
-        }
-
-
-        /* CLEAR MEMORY */
-
-        if (
-            t.includes("clear memories") ||
-            t.includes("delete memories") ||
-            t.includes("erase memories")
-        ) {
-
-            clearMemories();
-
-            return null;
-        }
-
-
-        /* LOCK */
-
-        if (
-            t === "lock" ||
-            t.includes("lock jarvis") ||
-            t.includes("lock system")
-        ) {
-
-            setTimeout(lockJarvis, 100);
-
-            return "Locking voice and memory systems.";
-        }
-
-
-        /* HELP */
-
-        if (
-            t === "help" ||
-            t.includes("what can you do")
-        ) {
-
-            return "I can respond to commands, tell you the time and date, store local memories, show memories, and control the voice interface.";
-        }
-
-
-        if (
-            t.includes("thank you") ||
-            t.includes("thanks")
-        ) {
-
-            return "You're welcome, Boss.";
-        }
-
-
-        return "Command received, Boss. My local assistant engine does not have an answer for that yet.";
-    }
-
-
-    /* =====================================================
-       SEND
-       ===================================================== */
-
-    function sendMessage() {
-
-        const text = input.value.trim();
-
-        if (!text) return;
-
-        userMessage(text);
-
-        input.value = "";
-
-
-        /* LOCKED */
-
-        if (!unlocked) {
-
-            const lower = text.toLowerCase();
-
-            if (
-                lower.includes("jarvis") &&
-                (
-                    lower.includes("unlock") ||
-                    lower.includes("activate") ||
-                    lower.includes("wake")
-                )
-            ) {
-
-                unlockJarvis();
-                return;
-            }
-
-            jarvis(
-                'Systems locked. Press VOICE and say "Jarvis" to unlock voice and memory.'
-            );
-
-            return;
-        }
-
-
-        if (chatState) {
-            chatState.textContent = "PROCESSING";
-        }
-
-
-        const reply = getReply(text);
-
-
-        if (reply === null) {
-            if (chatState) {
-                chatState.textContent = "READY";
-            }
-            return;
-        }
-
-
-        setTimeout(() => {
-
-            jarvis(reply);
-
-            if (chatState) {
-                chatState.textContent = "READY";
-            }
-
-        }, 350);
-    }
-
-
-    send.addEventListener("click", sendMessage);
-
-
-    input.addEventListener("keydown", (event) => {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
-            sendMessage();
-        }
-    });
-
-
-    /* =====================================================
-       VOICE
-       ===================================================== */
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-
-    if (SpeechRecognition) {
-
-        recognition = new SpeechRecognition();
-
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
-
-
-        recognition.onstart = () => {
-
-            listening = true;
-
-            if (chatState) {
-                chatState.textContent = "LISTENING";
-            }
-
-            if (voiceHead) {
-                voiceHead.textContent = "LISTENING...";
-            }
-
-            if (voiceButton) {
-                voiceButton.classList.add("active");
-            }
-        };
-
-
-        recognition.onresult = (event) => {
-
-            const transcript =
-                event.results[0][0].transcript
-                    .toLowerCase()
-                    .trim();
-
-            console.log("Heard:", transcript);
-
-
-            /* UNLOCK */
-
-            if (
-                transcript.includes("jarvis") ||
-                transcript.includes("hey jarvis") ||
-                transcript.includes("okay jarvis")
-            ) {
-
-                if (!unlocked) {
-
-                    unlockJarvis();
-
-                } else {
-
-                    jarvis("I'm listening, Boss.");
-                }
-
-                return;
-            }
-
-
-            /* COMMAND */
-
-            if (unlocked) {
-
-                input.value = transcript;
-
-                sendMessage();
-
-            } else {
 
                 jarvis(
-                    'Please say "Jarvis" to unlock the system.'
+                    "What would you like me to remember?"
                 );
-            }
-        };
 
-
-        recognition.onend = () => {
-
-            listening = false;
-
-            if (voiceButton) {
-                voiceButton.classList.remove("active");
+                return;
             }
 
-            if (voiceHead) {
-                voiceHead.textContent =
-                    unlocked
-                        ? "VOICE + MEMORY READY"
-                        : "VOICE + MEMORY LOCKED";
-            }
+            saveMemory(memory);
 
-            if (chatState) {
-                chatState.textContent =
-                    unlocked ? "READY" : "LOCKED";
-            }
-        };
-
-
-        recognition.onerror = (event) => {
-
-            console.log(
-                "Voice error:",
-                event.error
+            jarvis(
+                "Got it, Boss. I'll remember that."
             );
 
-            listening = false;
-
-            if (voiceButton) {
-                voiceButton.classList.remove("active");
-            }
-
-            if (voiceHead) {
-
-                if (event.error === "not-allowed") {
-                    voiceHead.textContent =
-                        "ALLOW MICROPHONE ACCESS";
-                } else {
-                    voiceHead.textContent =
-                        "VOICE ERROR";
-                }
-            }
-        };
-
-
-        if (voiceButton) {
-
-            voiceButton.addEventListener("click", async () => {
-
-                if (listening) {
-
-                    try {
-                        recognition.stop();
-                    } catch (e) {}
-
-                    return;
-                }
-
-
-                try {
-
-                    if (
-                        navigator.mediaDevices &&
-                        navigator.mediaDevices.getUserMedia
-                    ) {
-
-                        const stream =
-                            await navigator.mediaDevices.getUserMedia({
-                                audio: true
-                            });
-
-                        stream.getTracks().forEach(
-                            track => track.stop()
-                        );
-                    }
-
-                } catch (error) {
-
-                    jarvis(
-                        "Microphone permission is required. Please allow microphone access."
-                    );
-
-                    if (voiceHead) {
-                        voiceHead.textContent =
-                            "MICROPHONE REQUIRED";
-                    }
-
-                    return;
-                }
-
-
-                try {
-
-                    recognition.start();
-
-                } catch (error) {
-
-                    console.log(error);
-                }
-            });
+            return;
         }
 
-    } else {
 
-        if (voiceHead) {
-            voiceHead.textContent =
-                "VOICE NOT SUPPORTED";
+        /* ==============================
+           FAVOURITE COLOUR
+           ============================== */
+
+        if (
+            text.includes("my favourite colour is") ||
+            text.includes("my favorite color is")
+        ) {
+
+            let value = command
+                .replace(
+                    /my favourite colour is/i,
+                    ""
+                )
+                .replace(
+                    /my favorite color is/i,
+                    ""
+                )
+                .trim();
+
+            saveMemory(
+                "Favourite colour: " + value
+            );
+
+            jarvis(
+                "Got it, Boss. I'll remember that your favourite colour is " +
+                value +
+                "."
+            );
+
+            return;
         }
 
-        jarvis(
-            "Voice recognition is not supported by this browser."
-        );
-    }
 
-
-    /* =====================================================
-       STARTUP
-       ===================================================== */
-
-    if (aiStatus) {
-        aiStatus.textContent = "● ONLINE";
-        aiStatus.className = "on";
-    }
-
-    if (networkStatus) {
-        networkStatus.textContent = "● ONLINE";
-        networkStatus.className = "on";
-    }
-
-    lockJarvis();
-
-    setTimeout(() => {
-
-        jarvis(
-            'Systems online. Voice and memory locked. Press VOICE and say "Jarvis" to unlock.'
-        );
-
-    }, 300);
-
-    console.log(
-        "J.A.R.V.I.S. — Voice + Memory system loaded."
-    );
-
-});
+        /* ==============================
+           NAME
