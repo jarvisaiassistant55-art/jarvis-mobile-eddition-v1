@@ -685,3 +685,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (networkStatus) {
+        networkStatus.textContent = "● ONLINE";
+        networkStatus.className = "on";
+    }
+
+    setLocked();
+
+
+    /* =====================================================
+       STARTUP MESSAGE
+       ===================================================== */
+
+    setTimeout(() => {
+
+        jarvis(
+            'Systems online. Voice interface locked. Press VOICE and say "Jarvis" to unlock.'
+        );
+
+    }, 300);
+
+
+    /* =====================================================
+       DEBUG MESSAGE
+       ===================================================== */
+
+    console.log(
+        "J.A.R.V.I.S. script loaded successfully."
+    );
+
+});
