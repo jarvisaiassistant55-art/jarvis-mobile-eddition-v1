@@ -3,163 +3,365 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width,
-        initial-scale=1.0,
-        maximum-scale=1.0,
-        user-scalable=no"
-    >
+    <meta name="viewport"
+          content="width=device-width,
+          initial-scale=1.0,
+          maximum-scale=1.0,
+          user-scalable=no">
 
     <title>J.A.R.V.I.S. — Mobile Edition</title>
 
-    <!-- Main UI stylesheet -->
     <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
-    <main class="app">
+<main class="app">
 
-        <!-- ================= HEADER ================= -->
-        <header class="header">
-            <div class="system-label">STARK INDUSTRIES</div>
+    <header class="header">
+        <div class="system-label">STARK INDUSTRIES</div>
+        <h1>J.A.R.V.I.S.</h1>
+        <p class="edition">MOBILE EDITION</p>
+        <div class="header-line"></div>
+    </header>
 
-            <h1>J.A.R.V.I.S.</h1>
+    <section class="core-section">
+        <div class="core">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
 
-            <p class="edition">MOBILE EDITION</p>
-
-            <div class="header-line"></div>
-        </header>
-
-
-        <!-- ================= CORE ================= -->
-        <section class="core-section">
-
-            <div class="core">
-
-                <div class="ring r1"></div>
-                <div class="ring r2"></div>
-                <div class="ring r3"></div>
-
-                <div class="center">
-                    <span>J</span>
-                </div>
-
+            <div class="center">
+                <span>J</span>
             </div>
+        </div>
 
-            <div class="core-status">
-                <span class="status-dot"></span>
-                CORE ACTIVE
-            </div>
+        <div class="core-status">
+            <span class="status-dot"></span>
+            CORE ACTIVE
+        </div>
+    </section>
 
-        </section>
+    <section class="status">
 
+        <div class="section-title">
+            <span>SYSTEM STATUS</span>
+            <small>ONLINE</small>
+        </div>
 
-        <!-- ================= SYSTEM STATUS ================= -->
-        <section class="status">
+        <div class="status-line"></div>
 
-            <div class="section-title">
-                <span>SYSTEM STATUS</span>
-                <small>ONLINE</small>
-            </div>
+        <div class="row">
+            <span>AI CORE</span>
+            <b class="on">● ONLINE</b>
+        </div>
 
-            <div class="status-line"></div>
+        <div class="row">
+            <span>NETWORK</span>
+            <b class="on">● ONLINE</b>
+        </div>
 
-            <div class="row">
-                <span>AI CORE</span>
-                <b id="aiStatus" class="on">● ONLINE</b>
-            </div>
+        <div class="row">
+            <span>VOICE</span>
+            <b id="voiceStatus" class="off">○ READY</b>
+        </div>
 
-            <div class="row">
-                <span>NETWORK</span>
-                <b id="networkStatus" class="on">● ONLINE</b>
-            </div>
+        <div class="row">
+            <span>MEMORY</span>
+            <b class="off">○ LOCKED</b>
+        </div>
 
-            <div class="row">
-                <span>VOICE</span>
-                <b id="voiceStatus" class="off">○ LOCKED</b>
-            </div>
+    </section>
 
-            <div class="row">
-                <span>MEMORY</span>
-                <b id="memoryStatus" class="off">○ LOCKED</b>
-            </div>
+    <section class="chat-panel">
 
-        </section>
+        <div class="chat-header">
+            <span>J.A.R.V.I.S. COMMUNICATION</span>
+            <span id="chatState">READY</span>
+        </div>
 
+        <div id="chat" class="chat"></div>
 
-        <!-- ================= CHAT ================= -->
-        <section class="chat-panel">
+    </section>
 
-            <div class="chat-header">
-                <span>J.A.R.V.I.S. COMMUNICATION</span>
-                <span id="chatState">READY</span>
-            </div>
+    <section class="input-area">
 
-            <div
-                class="chat"
-                id="chat"
-                aria-live="polite"
-            >
-                <!-- Messages appear here -->
-            </div>
+        <input
+            id="msg"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask J.A.R.V.I.S..."
+        >
 
-        </section>
+        <button id="send" type="button">
+            SEND
+        </button>
 
+    </section>
 
-        <!-- ================= INPUT ================= -->
-        <section class="input-area">
+    <section class="voice-panel">
 
-            <input
-                id="msg"
-                type="text"
-                autocomplete="off"
-                autocapitalize="sentences"
-                placeholder="Ask J.A.R.V.I.S..."
-                aria-label="Message"
-            >
-
-            <button
-                id="send"
+        <button id="voiceButton"
                 type="button"
-            >
-                SEND
-            </button>
+                class="voice-button">
+            🎙️
+            <span>VOICE</span>
+        </button>
 
-        </section>
+    </section>
 
+    <footer class="footer">
+        <span>J.A.R.V.I.S. CORE</span>
+        <span>v1.0 MOBILE</span>
+    </footer>
 
-        <!-- ================= VOICE ================= -->
-        <section class="voice-panel">
-
-            <button
-                id="voiceButton"
-                type="button"
-                class="voice-button"
-            >
-                🎙️
-                <span>VOICE</span>
-            </button>
-
-            <div id="voiceHead" class="voice-head">
-                VOICE SYSTEM
-            </div>
-
-        </section>
+</main>
 
 
-        <!-- ================= FOOTER ================= -->
-        <footer class="footer">
-            <span>J.A.R.V.I.S. CORE</span>
-            <span>v1.0 MOBILE</span>
-        </footer>
+<!-- =====================================================
+     J.A.R.V.I.S. JAVASCRIPT
+     ===================================================== -->
 
-    </main>
+<script>
+
+"use strict";
+
+(function () {
+
+    const chat = document.getElementById("chat");
+    const msg = document.getElementById("msg");
+    const send = document.getElementById("send");
+    const chatState = document.getElementById("chatState");
+    const voiceButton = document.getElementById("voiceButton");
+    const voiceStatus = document.getElementById("voiceStatus");
 
 
-    <!-- JavaScript loaded after the page -->
-    <script src="./script.js" defer></script>
+    function addMessage(sender, text, type) {
+
+        const message = document.createElement("div");
+
+        message.className = "message " + type;
+
+        message.textContent =
+            sender + ": " + text;
+
+        chat.appendChild(message);
+
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+
+    function getReply(text) {
+
+        const command = text.toLowerCase().trim();
+
+
+        if (command.includes("hello") ||
+            command === "hi") {
+
+            return "Hello, Boss. J.A.R.V.I.S. is online.";
+        }
+
+
+        if (command.includes("how are you")) {
+
+            return "All systems are operating normally, Boss.";
+        }
+
+
+        if (command.includes("who are you")) {
+
+            return "I am J.A.R.V.I.S., your personal AI assistant.";
+        }
+
+
+        if (command.includes("time")) {
+
+            return "The current time is " +
+                new Date().toLocaleTimeString();
+        }
+
+
+        if (command.includes("date")) {
+
+            return "Today's date is " +
+                new Date().toLocaleDateString();
+        }
+
+
+        if (command.includes("status")) {
+
+            return "AI Core online. Network online. J.A.R.V.I.S. ready.";
+        }
+
+
+        if (command.includes("help")) {
+
+            return "Try saying hello, asking for the time, date, or system status.";
+        }
+
+
+        return "Command received, Boss. Online AI connection is not configured yet.";
+    }
+
+
+    function sendMessage() {
+
+        const text = msg.value.trim();
+
+        if (!text) {
+            return;
+        }
+
+
+        addMessage(
+            "YOU",
+            text,
+            "user"
+        );
+
+
+        msg.value = "";
+
+
+        if (chatState) {
+            chatState.textContent = "PROCESSING";
+        }
+
+
+        setTimeout(function () {
+
+            const response = getReply(text);
+
+
+            addMessage(
+                "J.A.R.V.I.S.",
+                response,
+                "ai"
+            );
+
+
+            if (chatState) {
+                chatState.textContent = "READY";
+            }
+
+        }, 500);
+
+    }
+
+
+    // SEND BUTTON
+
+    send.addEventListener(
+        "click",
+        sendMessage
+    );
+
+
+    // ENTER KEY
+
+    msg.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                sendMessage();
+            }
+
+        }
+    );
+
+
+    // STARTUP MESSAGE
+
+    addMessage(
+        "J.A.R.V.I.S.",
+        "Systems online. How may I assist you, Boss?",
+        "ai"
+    );
+
+
+    // VOICE
+
+    if (voiceButton) {
+
+        voiceButton.addEventListener(
+            "click",
+            function () {
+
+                const Recognition =
+                    window.SpeechRecognition ||
+                    window.webkitSpeechRecognition;
+
+
+                if (!Recognition) {
+
+                    if (voiceStatus) {
+                        voiceStatus.textContent =
+                            "○ NOT SUPPORTED";
+                    }
+
+                    return;
+                }
+
+
+                const recognition =
+                    new Recognition();
+
+
+                recognition.lang = "en-US";
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+
+                if (voiceStatus) {
+                    voiceStatus.textContent =
+                        "● LISTENING";
+                }
+
+
+                recognition.start();
+
+
+                recognition.onresult =
+                    function (event) {
+
+                        const spoken =
+                            event.results[0][0].transcript;
+
+
+                        msg.value = spoken;
+
+                        sendMessage();
+                    };
+
+
+                recognition.onend =
+                    function () {
+
+                        if (voiceStatus) {
+                            voiceStatus.textContent =
+                                "○ READY";
+                        }
+
+                    };
+
+            }
+        );
+
+    }
+
+
+    console.log(
+        "J.A.R.V.I.S. SYSTEM ONLINE"
+    );
+
+})();
+
+</script>
 
 </body>
 </html>
