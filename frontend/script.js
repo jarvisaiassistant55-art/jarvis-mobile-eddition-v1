@@ -1,344 +1,191 @@
-/* =========================================================
-   J.A.R.V.I.S. — STABLE REPLACEMENT SCRIPT
-   Chat + Send Button + Enter Key + Voice Input
-   ========================================================= */
-
 "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    // ---------------------------------------------------------
-    // GET ELEMENTS
-    // ---------------------------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
 
     const chat = document.getElementById("chat");
-    const input = document.getElementById("msg");
+    const msg = document.getElementById("msg");
     const send = document.getElementById("send");
-
+    const chatState = document.getElementById("chatState");
     const voiceButton = document.getElementById("voiceButton");
     const voiceStatus = document.getElementById("voiceStatus");
 
-    // ---------------------------------------------------------
-    // SAFETY CHECK
-    // ---------------------------------------------------------
+    // CHECK HTML ELEMENTS
+    console.log("JARVIS STARTING...");
+    console.log("chat:", chat);
+    console.log("msg:", msg);
+    console.log("send:", send);
 
-    if (!chat || !input || !send) {
-        console.error("J.A.R.V.I.S.: Required elements not found.");
+    if (!chat || !msg || !send) {
+        alert("J.A.R.V.I.S. ERROR: Chat elements not found.");
         return;
     }
 
-    console.log("J.A.R.V.I.S.: Script loaded successfully.");
-
-    // ---------------------------------------------------------
     // ADD MESSAGE
-    // ---------------------------------------------------------
+    function addMessage(name, text, className) {
 
-    function addMessage(sender, text, type) {
+        const div = document.createElement("div");
 
-        const message = document.createElement("div");
+        div.className = className || "message";
 
-        message.className = "message " + (type || "");
+        div.textContent = name + ": " + text;
 
-        message.textContent = sender + ": " + text;
-
-        chat.appendChild(message);
+        chat.appendChild(div);
 
         chat.scrollTop = chat.scrollHeight;
-
-        return message;
     }
 
-    // ---------------------------------------------------------
-    // JARVIS RESPONSE
-    // ---------------------------------------------------------
+    // JARVIS REPLY
+    function reply(text) {
 
-    function getJarvisReply(text) {
+        const t = text.toLowerCase();
 
-        const command = text.toLowerCase().trim();
-
-        if (
-            command === "hello" ||
-            command === "hi" ||
-            command.includes("hello jarvis") ||
-            command.includes("hi jarvis")
-        ) {
-            return "Hello, Boss. Systems are online. How may I assist you?";
+        if (t.includes("hello") || t === "hi") {
+            return "Hello, Boss. J.A.R.V.I.S. is online.";
         }
 
-        if (
-            command.includes("how are you") ||
-            command.includes("how are things")
-        ) {
-            return "All systems are functioning normally, Boss.";
+        if (t.includes("how are you")) {
+            return "All systems are operating normally, Boss.";
         }
 
-        if (
-            command.includes("who are you") ||
-            command.includes("what are you")
-        ) {
-            return "I am J.A.R.V.I.S., your personal digital assistant.";
+        if (t.includes("who are you")) {
+            return "I am J.A.R.V.I.S., your personal AI assistant.";
         }
 
-        if (
-            command.includes("time")
-        ) {
+        if (t.includes("time")) {
             return "The current time is " +
-                new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }) + ".";
+                new Date().toLocaleTimeString();
         }
 
-        if (
-            command.includes("date") ||
-            command.includes("today")
-        ) {
-            return "Today is " +
-                new Date().toLocaleDateString([], {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                }) + ".";
+        if (t.includes("date")) {
+            return "Today's date is " +
+                new Date().toLocaleDateString();
         }
 
-        if (
-            command.includes("thank")
-        ) {
-            return "You're welcome, Boss.";
+        if (t.includes("status")) {
+            return "AI Core ONLINE. Network ONLINE. J.A.R.V.I.S. ready.";
         }
 
-        if (
-            command.includes("good morning")
-        ) {
-            return "Good morning, Boss. J.A.R.V.I.S. is ready.";
+        if (t.includes("help")) {
+            return "I am ready, Boss. Try asking for the time, date, or system status.";
         }
 
-        if (
-            command.includes("good night")
-        ) {
-            return "Good night, Boss. Systems will remain ready.";
-        }
-
-        if (
-            command.includes("status") ||
-            command.includes("system status")
-        ) {
-            return "All local J.A.R.V.I.S. systems are operational.";
-        }
-
-        if (
-            command.includes("help")
-        ) {
-            return "You can ask me about the time, date, system status, or simply say hello.";
-        }
-
-        return "I received your message, Boss. Online AI connection is not configured yet.";
+        return "Command received, Boss. Online AI is not connected yet.";
     }
 
-    // ---------------------------------------------------------
-    // SEND MESSAGE
-    // ---------------------------------------------------------
-
+    // SEND FUNCTION
     function sendMessage() {
 
-        const text = input.value.trim();
+        const text = msg.value.trim();
 
-        if (!text) {
+        if (text === "") {
             return;
         }
 
-        // Show user message
         addMessage("YOU", text, "user");
 
-        // Clear input
-        input.value = "";
+        msg.value = "";
 
-        // Disable temporarily
-        send.disabled = true;
+        if (chatState) {
+            chatState.textContent = "PROCESSING";
+        }
 
-        // Processing message
-        const processing = addMessage(
-            "J.A.R.V.I.S.",
-            "Processing...",
-            "ai"
-        );
+        setTimeout(function () {
 
-        // Small response delay
-        setTimeout(() => {
+            const answer = reply(text);
 
-            const reply = getJarvisReply(text);
+            addMessage("J.A.R.V.I.S.", answer, "ai");
 
-            processing.textContent =
-                "J.A.R.V.I.S.: " + reply;
+            if (chatState) {
+                chatState.textContent = "READY";
+            }
 
-            chat.scrollTop = chat.scrollHeight;
-
-            send.disabled = false;
-
-            input.focus();
-
-            // Optional voice response
-            speak(reply);
-
-        }, 600);
+        }, 500);
     }
 
-    // ---------------------------------------------------------
     // SEND BUTTON
-    // ---------------------------------------------------------
-
-    send.addEventListener("click", (event) => {
-
-        event.preventDefault();
-
+    send.onclick = function () {
         sendMessage();
+    };
 
-    });
-
-    // ---------------------------------------------------------
     // ENTER KEY
-    // ---------------------------------------------------------
-
-    input.addEventListener("keydown", (event) => {
+    msg.onkeydown = function (event) {
 
         if (event.key === "Enter") {
-
             event.preventDefault();
-
             sendMessage();
-
         }
 
-    });
+    };
 
-    // ---------------------------------------------------------
-    // VOICE OUTPUT
-    // ---------------------------------------------------------
+    // VOICE
+    if (voiceButton) {
 
-    function speak(text) {
+        voiceButton.onclick = function () {
 
-        if (!("speechSynthesis" in window)) {
-            return;
-        }
+            const Recognition =
+                window.SpeechRecognition ||
+                window.webkitSpeechRecognition;
 
-        try {
-
-            window.speechSynthesis.cancel();
-
-            const speech = new SpeechSynthesisUtterance(text);
-
-            speech.rate = 1;
-            speech.pitch = 1;
-            speech.volume = 1;
-
-            window.speechSynthesis.speak(speech);
-
-        } catch (error) {
-
-            console.log("Voice output unavailable:", error);
-
-        }
-    }
-
-    // ---------------------------------------------------------
-    // VOICE INPUT
-    // ---------------------------------------------------------
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-    if (voiceButton && SpeechRecognition) {
-
-        const recognition = new SpeechRecognition();
-
-        recognition.lang = "en-US";
-        recognition.continuous = false;
-        recognition.interimResults = false;
-
-        voiceButton.addEventListener("click", () => {
-
-            try {
-
-                recognition.start();
+            if (!Recognition) {
 
                 if (voiceStatus) {
-                    voiceStatus.textContent = "Listening...";
+                    voiceStatus.textContent = "NOT SUPPORTED";
                 }
 
-            } catch (error) {
-
-                console.log("Voice already active.");
-
+                return;
             }
 
-        });
+            const recognition = new Recognition();
 
-        recognition.onresult = (event) => {
-
-            const transcript =
-                event.results[0][0].transcript;
-
-            input.value = transcript;
+            recognition.lang = "en-US";
+            recognition.continuous = false;
+            recognition.interimResults = false;
 
             if (voiceStatus) {
-                voiceStatus.textContent = "Voice received";
+                voiceStatus.textContent = "● LISTENING";
             }
 
-            sendMessage();
+            recognition.start();
 
+            recognition.onresult = function (event) {
+
+                const text =
+                    event.results[0][0].transcript;
+
+                msg.value = text;
+
+                if (voiceStatus) {
+                    voiceStatus.textContent = "● ONLINE";
+                }
+
+                sendMessage();
+            };
+
+            recognition.onerror = function () {
+
+                if (voiceStatus) {
+                    voiceStatus.textContent = "○ LOCKED";
+                }
+
+            };
+
+            recognition.onend = function () {
+
+                if (voiceStatus) {
+                    voiceStatus.textContent = "○ READY";
+                }
+
+            };
         };
-
-        recognition.onerror = (event) => {
-
-            console.log("Voice error:", event.error);
-
-            if (voiceStatus) {
-                voiceStatus.textContent = "Voice unavailable";
-            }
-
-        };
-
-        recognition.onend = () => {
-
-            if (voiceStatus) {
-                voiceStatus.textContent = "Ready";
-            }
-
-        };
-
-    } else if (voiceButton) {
-
-        voiceButton.addEventListener("click", () => {
-
-            if (voiceStatus) {
-                voiceStatus.textContent =
-                    "Voice recognition is not supported.";
-            }
-
-        });
-
     }
 
-    // ---------------------------------------------------------
-    // INITIAL MESSAGE
-    // ---------------------------------------------------------
+    // STARTUP MESSAGE
+    addMessage(
+        "J.A.R.V.I.S.",
+        "Systems online. How may I assist you, Boss?",
+        "ai"
+    );
 
-    if (chat.children.length === 0) {
-
-        addMessage(
-            "J.A.R.V.I.S.",
-            "Systems online. How may I assist you, Boss?",
-            "ai"
-        );
-
-    }
-
-    // ---------------------------------------------------------
-    // FOCUS INPUT
-    // ---------------------------------------------------------
-
-    input.focus();
+    msg.focus();
 
 });
