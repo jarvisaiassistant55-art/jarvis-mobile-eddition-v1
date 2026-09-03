@@ -1,716 +1,266 @@
-/* =========================================================
-   J.A.R.V.I.S. — MOBILE EDITION
-   COMPLETE WORKING SCRIPT
-   ========================================================= */
+<!DOCTYPE html>
+<html lang="en">
 
-"use strict";
+<head>
 
-document.addEventListener("DOMContentLoaded", () => {
+    <meta charset="UTF-8">
 
-    /* =====================================================
-       ELEMENTS
-    ===================================================== */
+    <meta
+        name="viewport"
+        content="width=device-width,
+        initial-scale=1.0,
+        maximum-scale=1.0,
+        user-scalable=no"
+    >
 
-    const chat = document.getElementById("chat");
-    const input = document.getElementById("msg");
-    const send = document.getElementById("send");
+    <title>J.A.R.V.I.S. — Mobile Edition</title>
 
-    const voiceButton = document.getElementById("voiceButton");
-    const voiceStatus = document.getElementById("voiceStatus");
-    const chatState = document.getElementById("chatState");
+    <link rel="stylesheet" href="./style.css">
 
-    const aiStatus = document.getElementById("aiStatus");
-    const networkStatus = document.getElementById("networkStatus");
-    const memoryStatus = document.getElementById("memoryStatus");
+</head>
 
-    const voiceHead = document.getElementById("voiceHead");
 
+<body>
 
-    /* =====================================================
-       SAFETY CHECK — MAKE SURE HTML ELEMENTS EXIST
-       ===================================================== */
+<main class="app">
 
-    if (!chat || !input || !send) {
-        console.error("J.A.R.V.I.S.: Required HTML elements are missing.");
-        return;
-    }
 
+    <!-- =========================================
+         HEADER
+         ========================================= -->
 
-    /* =====================================================
-       STATE
-       ===================================================== */
+    <header class="header">
 
-    let unlocked = false;
-    let listening = false;
-    let recognition = null;
+        <div class="system-label">
+            STARK INDUSTRIES
+        </div>
 
+        <h1>
+            J.A.R.V.I.S.
+        </h1>
 
-    /* =====================================================
-       BASIC UI HELPERS
-       ===================================================== */
+        <p class="edition">
+            MOBILE EDITION
+        </p>
 
-    function setText(element, text) {
-        if (element) {
-            element.textContent = text;
-        }
-    }
+        <div class="header-line"></div>
 
+    </header>
 
-    function addMessage(sender, text, type = "ai") {
 
-        const message = document.createElement("div");
+    <!-- =========================================
+         CORE
+         ========================================= -->
 
-        message.className = "message " + type;
+    <section class="core-section">
 
-        const senderElement = document.createElement("strong");
-        senderElement.textContent = sender;
+        <div class="core">
 
-        const textElement = document.createElement("span");
-        textElement.textContent = text;
+            <div class="ring r1"></div>
 
-        message.appendChild(senderElement);
-        message.appendChild(textElement);
+            <div class="ring r2"></div>
 
-        chat.appendChild(message);
+            <div class="ring r3"></div>
 
-        chat.scrollTop = chat.scrollHeight;
-    }
+            <div class="center">
+                <span>J</span>
+            </div>
 
+        </div>
 
-    function jarvis(text) {
-        addMessage("J.A.R.V.I.S.", text, "ai");
-    }
+        <div class="core-status">
 
+            <span class="status-dot"></span>
 
-    function userMessage(text) {
-        addMessage("YOU", text, "user");
-    }
+            CORE ACTIVE
 
+        </div>
 
-    /* =====================================================
-       STATUS
-       ===================================================== */
+    </section>
 
-    function setLocked() {
 
-        unlocked = false;
+    <!-- =========================================
+         SYSTEM STATUS
+         ========================================= -->
 
-        if (voiceStatus) {
-            voiceStatus.textContent = "○ LOCKED";
-            voiceStatus.className = "off";
-        }
+    <section class="status">
 
-        setText(chatState, "LOCKED");
+        <div class="section-title">
 
-        if (voiceHead) {
-            voiceHead.textContent = "VOICE SYSTEM — LOCKED";
-        }
+            <span>
+                SYSTEM STATUS
+            </span>
 
-        if (memoryStatus) {
-            memoryStatus.textContent = "○ LOCKED";
-            memoryStatus.className = "off";
-        }
-    }
+            <small>
+                ONLINE
+            </small>
 
+        </div>
 
-    function setUnlocked() {
+        <div class="status-line"></div>
 
-        unlocked = true;
 
-        if (voiceStatus) {
-            voiceStatus.textContent = "● UNLOCKED";
-            voiceStatus.className = "on";
-        }
+        <div class="row">
 
-        setText(chatState, "READY");
+            <span>
+                AI CORE
+            </span>
 
-        if (voiceHead) {
-            voiceHead.textContent = "VOICE SYSTEM — READY";
-        }
+            <b id="aiStatus" class="on">
+                ● ONLINE
+            </b>
 
-        if (memoryStatus) {
-            memoryStatus.textContent = "● READY";
-            memoryStatus.className = "on";
-        }
-    }
+        </div>
 
 
-    /* =====================================================
-       VOICE UNLOCK
-       ===================================================== */
+        <div class="row">
 
-    function unlockJarvis() {
+            <span>
+                NETWORK
+            </span>
 
-        if (unlocked) {
-            jarvis("Voice system is already unlocked, Boss.");
-            return;
-        }
+            <b id="networkStatus" class="on">
+                ● ONLINE
+            </b>
 
-        setUnlocked();
+        </div>
 
-        jarvis("Voice authentication phrase accepted. Systems ready, Boss.");
-    }
 
+        <div class="row">
 
-    function lockJarvis() {
+            <span>
+                VOICE
+            </span>
 
-        setLocked();
+            <b id="voiceStatus" class="off">
+                ○ LOCKED
+            </b>
 
-        jarvis("Voice system locked.");
-    }
+        </div>
 
 
-    /* =====================================================
-       AI REPLY ENGINE
-       ===================================================== */
+        <div class="row">
 
-    function getReply(message) {
+            <span>
+                MEMORY
+            </span>
 
-        const text = message.toLowerCase().trim();
+            <b id="memoryStatus" class="off">
+                ○ LOCKED
+            </b>
 
+        </div>
 
-        /* GREETING */
+    </section>
 
-        if (
-            text === "hello" ||
-            text === "hi" ||
-            text === "hey" ||
-            text.includes("hello jarvis")
-        ) {
-            return "Good to hear from you, Boss. All systems are operational.";
-        }
 
+    <!-- =========================================
+         CHAT
+         ========================================= -->
 
-        /* WHO ARE YOU */
+    <section class="chat-panel">
 
-        if (
-            text.includes("who are you") ||
-            text.includes("what are you")
-        ) {
-            return "I am J.A.R.V.I.S., your mobile assistant interface.";
-        }
+        <div class="chat-header">
 
+            <span>
+                J.A.R.V.I.S. COMMUNICATION
+            </span>
 
-        /* HOW ARE YOU */
+            <span id="chatState">
+                LOCKED
+            </span>
 
-        if (
-            text.includes("how are you") ||
-            text.includes("how are things")
-        ) {
-            return "All systems are operating normally, Boss.";
-        }
+        </div>
 
 
-        /* TIME */
+        <div
+            class="chat"
+            id="chat"
+            aria-live="polite"
+        ></div>
 
-        if (
-            text === "time" ||
-            text.includes("what time") ||
-            text.includes("current time")
-        ) {
+    </section>
 
-            const now = new Date();
 
-            return "The current time is " +
-                now.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }) +
-                ".";
-        }
+    <!-- =========================================
+         TEXT INPUT
+         ========================================= -->
 
+    <section class="input-area">
 
-        /* DATE */
+        <input
+            id="msg"
+            type="text"
+            autocomplete="off"
+            autocapitalize="sentences"
+            placeholder="Type a command..."
+            aria-label="Message"
+        >
 
-        if (
-            text === "date" ||
-            text.includes("what date") ||
-            text.includes("today's date") ||
-            text.includes("today date")
-        ) {
+        <button
+            id="send"
+            type="button"
+        >
+            SEND
+        </button>
 
-            const now = new Date();
+    </section>
 
-            return "Today is " +
-                now.toLocaleDateString([], {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                }) +
-                ".";
-        }
 
+    <!-- =========================================
+         VOICE PANEL
+         ========================================= -->
 
-        /* STATUS */
+    <section class="voice-panel">
 
-        if (
-            text.includes("status") ||
-            text.includes("system status")
-        ) {
-            return "AI core online. Network interface online. Voice system " +
-                (unlocked ? "unlocked" : "locked") +
-                ".";
-        }
+        <button
+            id="voiceButton"
+            type="button"
+            class="voice-button"
+        >
+            🎙️
+            <span>
+                VOICE
+            </span>
+        </button>
 
 
-        /* MEMORY */
+        <div
+            id="voiceHead"
+            class="voice-head"
+        >
+            TEXT MODE
+        </div>
 
-        if (
-            text.includes("memory") ||
-            text.includes("memories")
-        ) {
+    </section>
 
-            if (!unlocked) {
-                return "Memory access requires voice unlock.";
-            }
 
-            return "Memory interface is ready. No external memory database is connected yet.";
-        }
+    <!-- =========================================
+         FOOTER
+         ========================================= -->
 
+    <footer class="footer">
 
-        /* LOCK */
+        <span>
+            J.A.R.V.I.S. CORE
+        </span>
 
-        if (
-            text === "lock" ||
-            text.includes("lock jarvis") ||
-            text.includes("lock system")
-        ) {
-            setTimeout(lockJarvis, 100);
-            return "Locking the voice interface.";
-        }
+        <span>
+            v1.0 MOBILE
+        </span>
 
+    </footer>
 
-        /* HELP */
 
-        if (
-            text === "help" ||
-            text.includes("what can you do")
-        ) {
-            return "You can ask me the time, date, system status, memory status, or use the voice interface.";
-        }
+</main>
 
 
-        /* THANK YOU */
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
 
-        if (
-            text.includes("thank you") ||
-            text.includes("thanks")
-        ) {
-            return "You're welcome, Boss.";
-        }
+<script src="./script.js"></script>
 
+</body>
 
-        /* UNKNOWN COMMAND */
-
-        return "I received your command, Boss. My basic local AI engine does not have an answer for that yet.";
-    }
-
-
-    /* =====================================================
-       SEND MESSAGE
-       ===================================================== */
-
-    function sendMessage() {
-
-        const text = input.value.trim();
-
-        if (!text) {
-            return;
-        }
-
-
-        /* SHOW USER MESSAGE */
-
-        userMessage(text);
-
-        input.value = "";
-
-
-        /* LOCK CHECK */
-
-        if (!unlocked) {
-
-            const lower = text.toLowerCase();
-
-            if (
-                lower.includes("jarvis") &&
-                (
-                    lower.includes("unlock") ||
-                    lower.includes("activate") ||
-                    lower.includes("wake")
-                )
-            ) {
-
-                unlockJarvis();
-                return;
-            }
-
-            jarvis("Voice system is locked. Say \"Jarvis\" using the voice button to unlock the interface.");
-
-            return;
-        }
-
-
-        /* PROCESSING */
-
-        setText(chatState, "PROCESSING");
-
-        const reply = getReply(text);
-
-
-        /* SMALL DELAY */
-
-        setTimeout(() => {
-
-            jarvis(reply);
-
-            setText(chatState, "READY");
-
-        }, 400);
-    }
-
-
-    /* =====================================================
-       SEND BUTTON
-       ===================================================== */
-
-    send.addEventListener("click", (event) => {
-
-        event.preventDefault();
-
-        sendMessage();
-
-    });
-
-
-    /* =====================================================
-       ENTER KEY
-       ===================================================== */
-
-    input.addEventListener("keydown", (event) => {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
-            sendMessage();
-        }
-
-    });
-
-
-    /* =====================================================
-       VOICE RECOGNITION
-       ===================================================== */
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-
-    if (!SpeechRecognition) {
-
-        if (voiceButton) {
-            voiceButton.disabled = false;
-        }
-
-        if (voiceHead) {
-            voiceHead.textContent =
-                "VOICE SYSTEM — BROWSER NOT SUPPORTED";
-        }
-
-    } else {
-
-        recognition = new SpeechRecognition();
-
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
-
-
-        /* ================================================
-           VOICE START
-           ================================================ */
-
-        recognition.onstart = () => {
-
-            listening = true;
-
-            setText(chatState, "LISTENING");
-
-            if (voiceHead) {
-                voiceHead.textContent = "LISTENING...";
-            }
-
-            if (voiceButton) {
-                voiceButton.classList.add("active");
-            }
-        };
-
-
-        /* ================================================
-           VOICE RESULT
-           ================================================ */
-
-        recognition.onresult = (event) => {
-
-            const transcript =
-                event.results[0][0].transcript
-                    .toLowerCase()
-                    .trim();
-
-            console.log("Voice:", transcript);
-
-
-            /* SHOW WHAT WAS HEARD */
-
-            if (voiceHead) {
-                voiceHead.textContent =
-                    "HEARD: " + transcript;
-            }
-
-
-            /* ============================================
-               UNLOCK PHRASE
-               ============================================ */
-
-            if (
-                transcript.includes("jarvis") ||
-                transcript.includes("hey jarvis") ||
-                transcript.includes("okay jarvis")
-            ) {
-
-                if (!unlocked) {
-
-                    unlockJarvis();
-
-                } else {
-
-                    jarvis("I'm listening, Boss.");
-                }
-
-                return;
-            }
-
-
-            /* ============================================
-               IF ALREADY UNLOCKED
-               ============================================ */
-
-            if (unlocked) {
-
-                input.value = transcript;
-
-                sendMessage();
-
-            } else {
-
-                jarvis(
-                    "Voice system is locked. Please say Jarvis to unlock."
-                );
-            }
-        };
-
-
-        /* ================================================
-           VOICE END
-           ================================================ */
-
-        recognition.onend = () => {
-
-            listening = false;
-
-            if (voiceButton) {
-                voiceButton.classList.remove("active");
-            }
-
-            if (voiceHead) {
-
-                voiceHead.textContent =
-                    unlocked
-                        ? "VOICE SYSTEM — READY"
-                        : "VOICE SYSTEM — LOCKED";
-            }
-
-            setText(
-                chatState,
-                unlocked ? "READY" : "LOCKED"
-            );
-        };
-
-
-        /* ================================================
-           VOICE ERROR
-           ================================================ */
-
-        recognition.onerror = (event) => {
-
-            console.error(
-                "Speech recognition error:",
-                event.error
-            );
-
-            listening = false;
-
-            if (voiceButton) {
-                voiceButton.classList.remove("active");
-            }
-
-            if (voiceHead) {
-
-                if (event.error === "not-allowed") {
-
-                    voiceHead.textContent =
-                        "MICROPHONE PERMISSION DENIED";
-
-                } else if (event.error === "no-speech") {
-
-                    voiceHead.textContent =
-                        "NO SPEECH DETECTED";
-
-                } else {
-
-                    voiceHead.textContent =
-                        "VOICE ERROR: " + event.error;
-                }
-            }
-
-            setText(
-                chatState,
-                unlocked ? "READY" : "LOCKED"
-            );
-        };
-    }
-
-
-    /* =====================================================
-       VOICE BUTTON
-       ===================================================== */
-
-    if (voiceButton) {
-
-        voiceButton.addEventListener("click", async () => {
-
-            if (!recognition) {
-
-                jarvis(
-                    "Voice recognition is not supported by this browser."
-                );
-
-                return;
-            }
-
-
-            if (listening) {
-
-                try {
-                    recognition.stop();
-                } catch (error) {
-                    console.log(error);
-                }
-
-                return;
-            }
-
-
-            /* ============================================
-               REQUEST MICROPHONE PERMISSION
-               ============================================ */
-
-            try {
-
-                if (
-                    navigator.mediaDevices &&
-                    navigator.mediaDevices.getUserMedia
-                ) {
-
-                    const stream =
-                        await navigator.mediaDevices.getUserMedia({
-                            audio: true
-                        });
-
-                    stream.getTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Microphone permission error:",
-                    error
-                );
-
-                if (voiceHead) {
-                    voiceHead.textContent =
-                        "ALLOW MICROPHONE ACCESS";
-                }
-
-                jarvis(
-                    "Microphone access is required for voice control. Please allow microphone permission and try again."
-                );
-
-                return;
-            }
-
-
-            /* ============================================
-               START RECOGNITION
-               ============================================ */
-
-            try {
-
-                recognition.start();
-
-            } catch (error) {
-
-                console.error(
-                    "Recognition start error:",
-                    error
-                );
-            }
-
-        });
-    }
-
-
-    /* =====================================================
-       INITIAL SYSTEM STATE
-       ===================================================== */
-
-    if (aiStatus) {
-        aiStatus.textContent = "● ONLINE";
-        aiStatus.className = "on";
-    }
-
-    if (networkStatus) {
-        networkStatus.textContent = "● ONLINE";
-        networkStatus.className = "on";
-    }
-
-    setLocked();
-
-
-    /* =====================================================
-       STARTUP MESSAGE
-       ===================================================== */
-
-    setTimeout(() => {
-
-        jarvis(
-            'Systems online. Voice interface locked. Press VOICE and say "Jarvis" to unlock.'
-        );
-
-    }, 300);
-
-
-    /* =====================================================
-       DEBUG MESSAGE
-       ===================================================== */
-
-    console.log(
-        "J.A.R.V.I.S. script loaded successfully."
-    );
-
-});
+</html>
