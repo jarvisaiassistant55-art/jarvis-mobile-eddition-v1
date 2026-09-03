@@ -461,5 +461,286 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /* ==============================
+                /* ==============================
            NAME
+           ============================== */
+
+        if (
+            text.startsWith("my name is ")
+        ) {
+
+            const name = command
+                .substring(11)
+                .trim();
+
+            if (!name) {
+
+                jarvis(
+                    "Please tell me your name."
+                );
+
+                return;
+            }
+
+            saveMemory(
+                "Name: " + name
+            );
+
+            jarvis(
+                "Got it. I'll remember your name."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           LIKES
+           ============================== */
+
+        if (
+            text.startsWith("i like ")
+        ) {
+
+            const thing = command
+                .substring(7)
+                .trim();
+
+            if (!thing) {
+
+                jarvis(
+                    "Tell me what you like."
+                );
+
+                return;
+            }
+
+            saveMemory(
+                "Likes: " + thing
+            );
+
+            jarvis(
+                "I'll remember that you like " +
+                thing +
+                "."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           SHOW MEMORY
+           ============================== */
+
+        if (
+            text === "memory" ||
+            text === "memories" ||
+            text === "show memory" ||
+            text === "show memories" ||
+            text === "show my memories"
+        ) {
+
+            showMemories();
+
+            return;
+        }
+
+
+        /* ==============================
+           MEMORY COUNT
+           ============================== */
+
+        if (
+            text === "memory count" ||
+            text.includes("how many memories")
+        ) {
+
+            jarvis(
+                "I currently have " +
+                memories.length +
+                " stored memories."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           FIND MEMORY
+           ============================== */
+
+        if (
+            text.startsWith("find memory ")
+        ) {
+
+            const keyword = command
+                .substring(12)
+                .trim();
+
+            if (!keyword) {
+
+                jarvis(
+                    "Tell me what memory you want me to find."
+                );
+
+                return;
+            }
+
+            searchMemory(keyword);
+
+            return;
+        }
+
+
+        /* ==============================
+           CLEAR MEMORY
+           ============================== */
+
+        if (
+            text === "clear memory" ||
+            text === "clear memories" ||
+            text === "delete memories"
+        ) {
+
+            clearMemories();
+
+            return;
+        }
+
+
+        /* ==============================
+           HELP
+           ============================== */
+
+        if (
+            text === "help" ||
+            text === "commands"
+        ) {
+
+            jarvis(
+                "Available commands: hello, time, date, status, " +
+                "remember something, my favourite colour is..., " +
+                "my name is..., I like..., show my memories, " +
+                "find memory..., clear memories, and lock."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           THANKS
+           ============================== */
+
+        if (
+            text.includes("thank you") ||
+            text.includes("thanks")
+        ) {
+
+            jarvis(
+                "You're welcome, Boss."
+            );
+
+            return;
+        }
+
+
+        /* ==============================
+           UNKNOWN COMMAND
+           ============================== */
+
+        jarvis(
+            "I received your message, Boss. " +
+            "I don't have a specific response for that command yet."
+        );
+    }
+
+
+    /* ================================
+       SEND BUTTON
+       ================================ */
+
+    send.addEventListener("click", function () {
+
+        const text = input.value.trim();
+
+        if (!text) {
+            return;
+        }
+
+        userMessage(text);
+
+        input.value = "";
+
+        if (chatState) {
+            chatState.textContent = "PROCESSING";
+        }
+
+        setTimeout(function () {
+
+            processCommand(text);
+
+            if (chatState) {
+                chatState.textContent =
+                    unlocked ? "READY" : "LOCKED";
+            }
+
+        }, 200);
+    });
+
+
+    /* ================================
+       ENTER KEY
+       ================================ */
+
+    input.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            send.click();
+        }
+    });
+
+
+    /* ================================
+       INITIAL STATUS
+       ================================ */
+
+    if (aiStatus) {
+
+        aiStatus.textContent = "● ONLINE";
+        aiStatus.className = "on";
+    }
+
+
+    if (networkStatus) {
+
+        networkStatus.textContent = "● ONLINE";
+        networkStatus.className = "on";
+    }
+
+
+    /* ================================
+       STARTUP
+       ================================ */
+
+    lockSystem();
+
+
+    setTimeout(function () {
+
+        jarvis(
+            'Systems online. Type "unlock jarvis" to begin.'
+        );
+
+    }, 300);
+
+
+    console.log(
+        "J.A.R.V.I.S. TEXT + MEMORY ENGINE ONLINE"
+    );
+
+});
