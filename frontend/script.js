@@ -1,42 +1,53 @@
-"use strict";
-
-alert("JARVIS SCRIPT IS WORKING");
-
 document.addEventListener("DOMContentLoaded", function () {
 
-    const chat = document.getElementById("chat");
-    const input = document.getElementById("msg");
-    const send = document.getElementById("send");
+    const sendButton = document.getElementById("send");
+    const messageInput = document.getElementById("msg");
+    const chatBox = document.getElementById("chat");
 
-    if (!chat || !input || !send) {
-        alert("JARVIS HTML ELEMENTS NOT FOUND");
+    if (!sendButton || !messageInput || !chatBox) {
+        alert("ERROR: JARVIS HTML IDs NOT FOUND");
         return;
     }
 
-    send.addEventListener("click", function () {
+    sendButton.onclick = function () {
 
-        const text = input.value.trim();
+        const message = messageInput.value.trim();
 
-        if (!text) {
-            alert("TYPE SOMETHING FIRST");
+        if (message === "") {
             return;
         }
 
-        const user = document.createElement("div");
-        user.className = "message user";
-        user.textContent = "YOU: " + text;
+        const userMessage = document.createElement("div");
 
-        chat.appendChild(user);
+        userMessage.className = "message user";
 
-        const reply = document.createElement("div");
-        reply.className = "message ai";
-        reply.textContent = "J.A.R.V.I.S.: I am working, Boss.";
+        userMessage.textContent =
+            "YOU: " + message;
 
-        chat.appendChild(reply);
+        chatBox.appendChild(userMessage);
 
-        input.value = "";
+        const jarvisMessage = document.createElement("div");
 
-        chat.scrollTop = chat.scrollHeight;
+        jarvisMessage.className = "message ai";
+
+        jarvisMessage.textContent =
+            "J.A.R.V.I.S.: Systems online, Boss. I received your message.";
+
+        chatBox.appendChild(jarvisMessage);
+
+        messageInput.value = "";
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    messageInput.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            sendButton.click();
+        }
     });
 
 });
